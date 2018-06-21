@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import './allele-slider.css';
 
-class AlleleSlider extends Component {
+import AminoAcid from './amino-acid';
+
+class AminoAcidSlider extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -16,6 +18,9 @@ class AlleleSlider extends Component {
     this.wrapperRef = React.createRef();
     this.selectionRef = React.createRef();
     this.alleleStringRef = React.createRef();
+
+    // this.aa_a = aa_a;
+    // debugger
 
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseMove = this.onMouseMove.bind(this);
@@ -110,10 +115,19 @@ class AlleleSlider extends Component {
       width: `${this.state.allelesWidth}px`
     }
 
+    const acidWidth = 17;
+
+    const AminoAcids = this.props.aminoAcids.split('').map((a, i) =>
+      <AminoAcid type={a} x={acidWidth/2 + (i * (acidWidth * 1.1))} width={acidWidth}/>
+    )
+
     return (
       <div className={wrapperClass} style={frameStyle} ref={this.wrapperRef}>
         <div className="alleles" style={allelesStyle} ref={this.alleleStringRef}>
-          lnmvorluqpmnrnouppnmrrlpqqmuvoulovqlnmvorluqpmnrnouppnmrrlpqqmuvoulovqlnmvorluqpmnrnoupplnmvorluqpmnrnouppnmrrlpqqmuvoulovqlnmvorluqpmnrnouppnmrrlpqqmuvoulovqlnmvorluqpmnrnoupp
+          <svg width={1000} height={17} viewBox="0 0 1000 17">
+            <path d="M9,9L981,9" style={{stroke: '#AAA', strokeWidth: '2px'}} />
+            { AminoAcids }
+          </svg>
         </div>
         <div
           className="selection"
@@ -126,7 +140,8 @@ class AlleleSlider extends Component {
   }
 }
 
-AlleleSlider.propTypes = {
+AminoAcidSlider.propTypes = {
+  aminoAcids: PropTypes.string,
   width: PropTypes.number,
   selectionStart: PropTypes.number,
   selectionWidth: PropTypes.number,
@@ -134,10 +149,11 @@ AlleleSlider.propTypes = {
   updateSelectionStart: PropTypes.func
 };
 
-AlleleSlider.defaultProps = {
+AminoAcidSlider.defaultProps = {
+  aminoAcids: "",
   width: 600,
   selectionWidth: 90,
   selectionStart: 0
 };
 
-export default AlleleSlider;
+export default AminoAcidSlider;
