@@ -6,14 +6,17 @@ import AminoAcid from './amino-acid';
 class InfoBox extends Component {
 
   render() {
+    console.log(this.props.selectionStart)
     const style = {
       top: 240,
-      left: -45
+      left: -45 + (this.props.selectionStart * 255)
     }
+    let letter = this.props.aminoAcids.charAt(Math.floor(this.props.aminoAcids.length * this.props.selectionStart));
+    if (!letter) letter = "e";
     return (
       <div className="info-box" style={style}>
         <svg viewBox="0 0 30 30" width="30px">
-          <AminoAcid  type="a" width={30}/>
+          <AminoAcid  type={letter} width={30}/>
         </svg>
         <p>
           <b>Name:</b> Leucine (L)
