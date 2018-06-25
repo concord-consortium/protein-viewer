@@ -2,34 +2,67 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import './info-box.css';
 import AminoAcid from './amino-acid';
+import types from '../util/amino-acid-types'
 
 class InfoBox extends Component {
 
-  render() {
-    console.log(this.props.selectionStart)
-    const style = {
-      top: 240,
-      left: -45 + (this.props.selectionStart * 255)
-    }
-    let letter = this.props.aminoAcids.charAt(Math.floor(this.props.aminoAcids.length * this.props.selectionStart));
-    if (!letter) letter = "e";
+  renderInfo(aminoAcid) {
+    const type = types[aminoAcid];
+    const description = type.description.map((d, i) => <li key={i}>{d}</li>)
+
     return (
-      <div className="info-box" style={style}>
+      <div className="info">
         <svg viewBox="0 0 30 30" width="30px">
-          <AminoAcid  type={letter} width={30}/>
+          <AminoAcid  type={aminoAcid} width={30}/>
         </svg>
         <p>
-          <b>Name:</b> Leucine (L)
-        </p>
-        <p>
-          <b>Codons:</b> CTT
+          <b>Name:</b> {aminoAcid.name}
         </p>
         <p>
           <ul>
-            <li>Non-polar</li>
-            <li>Hydrophobic</li>
+            {description}
           </ul>
         </p>
+      </div>
+    )
+  }
+
+  render() {
+    const location = Math.floor((this.props.aminoAcids.length - 1) * this.props.selection);
+    const aminoAcid = this.props.aminoAcids.charAt(location) || "e";
+
+    let secondAminoAcid;
+    if (this.props.secondAminoAcids) {
+      secondAminoAcid = this.props.secondAminoAcids.charAt(location) || "e";
+      if (secondAminoAcid === aminoAcid) {
+        secondAminoAcid = null;
+      }
+    }
+
+    const style = {
+      top: this.props.top,
+      left: this.props.left + (this.props.selection * this.props.width)
+    }
+    if (secondAminoAcid) {
+      style.left -= 89;
+    }
+
+    return (
+      <div className="info-box" style={style}>
+        <div className="info-wrapper">
+          { this.renderInfo(aminoAcid) }
+          { secondAminoAcid && this.renderInfo(secondAminoAcid) }
+        </div>
+        <div>
+          <label>
+            <input
+              name="isGoing"
+              type="checkbox"
+              checked={false}
+              onChange={this.onMarkLocation} />
+              Mark this location
+          </label>
+        </div>
       </div>
     );
   }
@@ -37,7 +70,10 @@ class InfoBox extends Component {
 
 InfoBox.propTypes = {
   svg: PropTypes.string,
-  highlightColor: PropTypes.string
+  highlightColor: PropTypes.string,
+  aminoAcids: PropTypes.string,
+  secondAminoAcids: PropTypes.string,
+  selection: PropTypes.number,
 };
 
 InfoBox.defaultProps = {

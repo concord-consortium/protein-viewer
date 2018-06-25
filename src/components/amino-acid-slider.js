@@ -4,6 +4,9 @@ import './allele-slider.css';
 
 import AminoAcid from './amino-acid';
 
+let lastMouseDownTime = -1;
+const maxClickTime = 500;
+
 class AminoAcidSlider extends Component {
   constructor(props) {
     super(props);
@@ -25,6 +28,7 @@ class AminoAcidSlider extends Component {
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
+    this.onClick = this.onClick.bind(this);
   }
 
   componentDidUpdate(props, state) {
@@ -66,6 +70,8 @@ class AminoAcidSlider extends Component {
     })
     evt.stopPropagation();
     evt.preventDefault();
+
+    lastMouseDownTime = Date.now();
   }
 
   onMouseUp(evt) {
@@ -84,6 +90,14 @@ class AminoAcidSlider extends Component {
     this.props.updateSelectionStart(percLeft);
     evt.stopPropagation();
     evt.preventDefault();
+  }
+
+  onClick() {
+    if (Date.now() - lastMouseDownTime > maxClickTime) return;
+
+    if (this.props.onClick) {
+      this.props.onClick();
+    }
   }
 
   render() {
@@ -118,7 +132,7 @@ class AminoAcidSlider extends Component {
     const acidWidth = 17;
 
     const AminoAcids = this.props.aminoAcids.split('').map((a, i) =>
-      <AminoAcid type={a} x={acidWidth/2 + (i * (acidWidth * 1.1))} width={acidWidth}/>
+      <AminoAcid type={a} x={acidWidth/2 + (i * (acidWidth * 1.1))} width={acidWidth} key={i} />
     )
 
     return (
@@ -134,6 +148,7 @@ class AminoAcidSlider extends Component {
           style={selectStyle}
           ref={this.selectionRef}
           onMouseDown={this.onMouseDown}
+          onClick={this.onClick}
         />
       </div>
     );
