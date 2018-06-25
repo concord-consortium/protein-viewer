@@ -35,16 +35,25 @@ class Protein extends Component {
   }
 
   render() {
-    console.log(this.state.selectionLeft);
     this.state.highlightPath.setAttribute("stroke-dashoffset", 0 - this.state.selectionLeft);
     const s = new XMLSerializer();
     const highlight = s.serializeToString(this.state.highlightPath);
+
+    const highlightProps = svgPathProperties(this.state.highlightPath.getAttribute("d"));
+    const highlightPathLength = highlightProps.getTotalLength();
+
+    const marks = this.props.marks.map(loc => {
+      const dist = loc * highlightPathLength;
+      const point = highlightProps.getPointAtLength(dist);
+      return <circle cx={point.x} cy={point.y} r="8" style={{fill: "#33F", stroke: "#AAF", strokeWidth: 2}} />
+    });
 
     return (
       <div className="protein">
         <svg viewBox={this.props.viewBox} width={this.props.width}>
           <g dangerouslySetInnerHTML={{__html: this.props.svg}} />
           <g dangerouslySetInnerHTML={{__html: highlight}} />
+          { marks }
         </svg>
       </div>
     );
@@ -53,11 +62,13 @@ class Protein extends Component {
 
 Protein.propTypes = {
   svg: PropTypes.string,
-  highlightColor: PropTypes.string
+  highlightColor: PropTypes.string,
+  marks: PropTypes.array
 };
 
 Protein.defaultProps = {
-  highlightColor: "255, 255, 0"
+  highlightColor: "255, 255, 0",
+  marks: []
 }
 
 export default Protein;

@@ -132,14 +132,23 @@ class AminoAcidSlider extends Component {
     const acidWidth = 17;
 
     const AminoAcids = this.props.aminoAcids.split('').map((a, i) =>
-      <AminoAcid type={a} x={acidWidth/2 + (i * (acidWidth * 1.1))} width={acidWidth} key={i} />
+      <AminoAcid type={a} x={acidWidth/2 + (i * (acidWidth * 1.1))} y={3} width={acidWidth} key={i} />
     )
+
+    const marks = this.props.marks.map(loc =>
+      <rect x={acidWidth/2 + (loc * (acidWidth * 1.1)) - 1} y="1" width="19" height="20" style={{fill: "#33F", stroke: "#AAF", strokeWidth: 2}} />
+    )
+
+    console.log("====")
+    console.log(this.props.marks)
+    console.log(marks)
 
     return (
       <div className={wrapperClass} style={frameStyle} ref={this.wrapperRef}>
         <div className="alleles" style={allelesStyle} ref={this.alleleStringRef}>
-          <svg width={1000} height={17} viewBox="0 0 1000 17">
-            <path d="M9,9L981,9" style={{stroke: '#AAA', strokeWidth: '2px'}} />
+          <svg width={1000} height={22} viewBox="0 0 1000 22">
+            <path d="M9,12L981,12" style={{stroke: '#AAA', strokeWidth: '2px'}} />
+            { marks }
             { AminoAcids }
           </svg>
         </div>
@@ -161,14 +170,16 @@ AminoAcidSlider.propTypes = {
   selectionStart: PropTypes.number,
   selectionWidth: PropTypes.number,
   highlightColor: PropTypes.string,
-  updateSelectionStart: PropTypes.func
+  updateSelectionStart: PropTypes.func,
+  marks: PropTypes.array
 };
 
 AminoAcidSlider.defaultProps = {
   aminoAcids: "",
   width: 600,
   selectionWidth: 90,
-  selectionStart: 0
+  selectionStart: 0,
+  marks: []
 };
 
 export default AminoAcidSlider;

@@ -47,6 +47,8 @@ class InfoBox extends Component {
       style.left -= 89;
     }
 
+    const marked = this.props.marks.indexOf(location) > -1;
+
     return (
       <div className="info-box" style={style}>
         <div className="info-wrapper">
@@ -58,8 +60,10 @@ class InfoBox extends Component {
             <input
               name="isGoing"
               type="checkbox"
-              checked={false}
-              onChange={this.onMarkLocation} />
+              checked={marked}
+              onChange={() => {
+                this.props.onMarkLocation && this.props.onMarkLocation(location)
+              }} />
               Mark this location
           </label>
         </div>
@@ -74,10 +78,13 @@ InfoBox.propTypes = {
   aminoAcids: PropTypes.string,
   secondAminoAcids: PropTypes.string,
   selection: PropTypes.number,
+  marks: PropTypes.array,
+  onMarkLocation: PropTypes.func
 };
 
 InfoBox.defaultProps = {
-  highlightColor: "255, 255, 0"
+  highlightColor: "255, 255, 0",
+  marks: []
 }
 
 export default InfoBox;
