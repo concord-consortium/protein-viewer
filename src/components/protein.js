@@ -45,7 +45,13 @@ class Protein extends Component {
     const marks = this.props.marks.map(loc => {
       const dist = loc * highlightPathLength;
       const point = highlightProps.getPointAtLength(dist);
-      return <circle cx={point.x} cy={point.y} r="8" style={{fill: "#33F", stroke: "#AAF", strokeWidth: 2}} />
+      const point1 = highlightProps.getPointAtLength(dist-5);
+      const point2 = highlightProps.getPointAtLength(dist+5);
+      const angle = Math.atan2(point2.y - point1.y, point2.x - point1.x);
+      const length = 10;
+      const d = `M ${Math.sin(angle) * length + point.x} ${-Math.cos(angle) * length + point.y}, L ${-Math.sin(angle) * length + point.x} ${Math.cos(angle) * length + point.y}`
+
+      return <path d={d} style={{stroke: "#33F", strokeWidth: 3}} />
     });
 
     return (
