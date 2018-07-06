@@ -16,7 +16,7 @@ class InfoBox extends Component {
           <AminoAcid  type={aminoAcid} width={30}/>
         </svg>
         <p>
-          <b>Name:</b> {aminoAcid.name}
+          <b>Name:</b> {type.name}
         </p>
         <p>
           <ul>

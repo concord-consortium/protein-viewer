@@ -110,10 +110,19 @@ class AlleleSlider extends Component {
       width: `${this.state.allelesWidth}px`
     }
 
+    const { alleles, selectionStart } = this.props
+    const location = Math.floor((alleles.length/3 - 1) * selectionStart) * 3;
+
     return (
       <div className={wrapperClass} style={frameStyle} ref={this.wrapperRef}>
         <div className="alleles" style={allelesStyle} ref={this.alleleStringRef}>
-          lnmvorluqpmnrnouppnmrrlpqqmuvoulovqlnmvorluqpmnrnouppnmrrlpqqmuvoulovqlnmvorluqpmnrnoupplnmvorluqpmnrnouppnmrrlpqqmuvoulovqlnmvorluqpmnrnouppnmrrlpqqmuvoulovqlnmvorluqpmnrnoupp
+          { 
+            alleles.split('').map((allele, i) => (
+              <div className={i - location <= 2 && i - location >= 0 ? 'highlight' : ''} key={i}>
+                {allele}
+              </div>
+            ))
+          }
         </div>
         <div
           className="selection"
@@ -131,13 +140,15 @@ AlleleSlider.propTypes = {
   selectionStart: PropTypes.number,
   selectionWidth: PropTypes.number,
   highlightColor: PropTypes.string,
-  updateSelectionStart: PropTypes.func
+  updateSelectionStart: PropTypes.func,
+  aminoAcids: PropTypes.string
 };
 
 AlleleSlider.defaultProps = {
   width: 600,
   selectionWidth: 90,
-  selectionStart: 0
+  selectionStart: 0,
+  aminoAcids: ""
 };
 
 export default AlleleSlider;

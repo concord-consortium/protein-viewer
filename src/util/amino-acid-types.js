@@ -3,7 +3,7 @@ export default {
     name: "Alanine (A)",
     description: ["Hydrophobic", "Non-Polar", "Neutral"]
   },
-  b: {
+  r: {
     name: "Arginine (R)",
     description: ["Hydrophilic", "Polar", "Charged (+)"]
   },

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import './allele-slider.css';
+import './amino-acid-slider.css';
 
 import AminoAcid from './amino-acid';
 
@@ -101,7 +101,7 @@ class AminoAcidSlider extends Component {
   }
 
   render() {
-    let wrapperClass = "allele-slider";
+    let wrapperClass = "amino-acid-slider";
     //FIXME
     if (this.state.selectionLeft > 10) {
       wrapperClass += " fade-left";
@@ -131,8 +131,9 @@ class AminoAcidSlider extends Component {
 
     const acidWidth = 17;
 
+    const location = Math.floor((this.props.aminoAcids.length - 1) * this.props.selectionStart);
     const AminoAcids = this.props.aminoAcids.split('').map((a, i) =>
-      <AminoAcid type={a} x={acidWidth/2 + (i * (acidWidth * 1.1))} y={3} width={acidWidth} key={i} />
+      <AminoAcid type={a} x={acidWidth/2 + (i * (acidWidth * 1.1))} y={3} width={acidWidth} selected={location === i} key={i} />
     )
 
     const marks = this.props.marks.map(loc =>
@@ -145,7 +146,7 @@ class AminoAcidSlider extends Component {
 
     return (
       <div className={wrapperClass} style={frameStyle} ref={this.wrapperRef}>
-        <div className="alleles" style={allelesStyle} ref={this.alleleStringRef}>
+        <div className="amino-acids" style={allelesStyle} ref={this.alleleStringRef}>
           <svg width={1000} height={22} viewBox="0 0 1000 22">
             <path d="M9,12L981,12" style={{stroke: '#AAA', strokeWidth: '2px'}} />
             { marks }

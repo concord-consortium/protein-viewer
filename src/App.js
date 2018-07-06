@@ -4,10 +4,15 @@ import Protein from './components/protein'
 import './App.css';
 import AminoAcidSlider from './components/amino-acid-slider'
 import InfoBox from './components/info-box';
+import { convertAminoAcidsToCodons } from './util/codon-utils'
+
+const workingAminoAcids = "ardearcfcaedearcdeadrcdfearcccdedeafdeadrcdarcaeeacer"
+const brokenAminoAcids = "ardearcfcaedearcdeadrcdfearcccdedeafdecdrcdarcaeeacer"
 
 const proteins = {
   working: {
-    aminoAcids: "abdeabcfcaedeabcdeadbcdfeabcccdedeafdeadbcdabcaeeaceb",
+    aminoAcids: workingAminoAcids,
+    alleles: convertAminoAcidsToCodons(workingAminoAcids),
     svgImage: `
       <g id="receptor-bound">
         <path d="M13,21.006L13,29.006L35,43.006L56,29.006L58,13.006" style="fill:none;stroke:rgb(255,93,189);stroke-width:10px;"/>
@@ -20,7 +25,8 @@ const proteins = {
     `
   },
   broken: {
-    aminoAcids: "abdeabcfcaedeabcdeadbcdfeabcccdedeafdecdbcdabcaeeaceb",
+    aminoAcids: brokenAminoAcids,
+    alleles: convertAminoAcidsToCodons,
     svgImage: `
       <g id="receptor-broken">
         <path d="M13,21.006L13,29.006L35,43.006L56,29.006L58,13.006" style="fill:none;stroke:rgb(255,93,189);stroke-width:10px;"/>
@@ -71,7 +77,7 @@ class App extends Component {
 
   handleUpdateSelectionStart(box) {
     const whichSelection = `selectionStart${box}`;
-    return (selectionStart) =>
+    return (selectionStart) => 
       this.setState({
         [whichSelection]: selectionStart
       });
@@ -169,6 +175,14 @@ class App extends Component {
             />
             <AminoAcidSlider
               aminoAcids={proteins[this.state.display[0]].aminoAcids}
+              width={300}
+              selectionStart={this.state.selectionStart1}
+              updateSelectionStart={this.handleUpdateSelectionStart(1)}
+              onClick={this.handleAminoAcidSliderClick(1)}
+              marks={this.state.marks1}
+            />
+            <AlleleSlider
+              alleles={proteins[this.state.display[0]].alleles}
               width={300}
               selectionStart={this.state.selectionStart1}
               updateSelectionStart={this.handleUpdateSelectionStart(1)}
