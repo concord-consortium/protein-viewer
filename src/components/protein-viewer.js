@@ -3,6 +3,9 @@ import PropTypes from 'prop-types';
 import AminoAcidSlider from './amino-acid-slider'
 import Protein from './protein'
 import InfoBox from './info-box';
+import getParameterByName from '../util/urlUtils';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
 import './protein-viewer.css';
 
 class ProteinViewer extends Component {
@@ -13,6 +16,7 @@ class ProteinViewer extends Component {
     this.state = {
       selectionStart: 0,
       showingInfoBox: false,
+      showingAlleles: !!getParameterByName('allelesVisible'),
       marks: []
     };
 
@@ -45,6 +49,12 @@ class ProteinViewer extends Component {
     });
   }
 
+  handleAllelesToggle = () => {
+    this.setState({
+      showingAlleles: !this.state.showingAlleles
+    });
+  }
+
   render() {
     return (
       <div className="protein-viewer">
@@ -70,20 +80,24 @@ class ProteinViewer extends Component {
         <div className="amino-acids">
           <AminoAcidSlider
             aminoAcids={this.props.aminoAcids}
+            alleles={this.props.alleles}
             width={300}
             selectionStart={this.state.selectionStart}
             updateSelectionStart={this.handleUpdateSelectionStart}
             onClick={this.handleAminoAcidSliderClick}
             marks={this.state.marks}
           />
-          { this.props.aminoAcids2 &&
+          { 
+            this.props.aminoAcids2 &&
             <AminoAcidSlider
               aminoAcids={this.props.aminoAcids2}
+              alleles={this.props.alleles2}
               width={300}
               selectionStart={this.state.selectionStart}
               updateSelectionStart={this.handleUpdateSelectionStart}
               onClick={this.handleAminoAcidSliderClick}
               marks={this.state.marks}
+              highlightColor="4, 255, 0"
             />
           }
         </div>
@@ -97,6 +111,18 @@ class ProteinViewer extends Component {
             width={274}
           />
         }
+        {
+          getParameterByName('allelesSwitchable') &&
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={this.state.showingAlleles}
+                onChange={this.handleAllelesToggle}
+              />
+            }
+            label="Show Alleles"
+          />
+        }
       </div>
     );
   }
@@ -104,8 +130,10 @@ class ProteinViewer extends Component {
 
 ProteinViewer.propTypes = {
   aminoAcids: PropTypes.string,
+  alleles: PropTypes.string,
   svgImage: PropTypes.string,
   aminoAcids2: PropTypes.string,
+  alleles2: PropTypes.string,
   svgImage2: PropTypes.string
 };
 

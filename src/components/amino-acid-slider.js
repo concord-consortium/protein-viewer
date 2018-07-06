@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import './allele-slider.css';
+import './amino-acid-slider.css';
 
 import AminoAcid from './amino-acid';
+import Codon from './codon';
 
 let lastMouseDownTime = -1;
 const maxClickTime = 500;
@@ -101,7 +102,7 @@ class AminoAcidSlider extends Component {
   }
 
   render() {
-    let wrapperClass = "allele-slider";
+    let wrapperClass = "amino-acid-slider";
     //FIXME
     if (this.state.selectionLeft > 10) {
       wrapperClass += " fade-left";
@@ -130,20 +131,35 @@ class AminoAcidSlider extends Component {
     }
 
     const acidWidth = 17;
+    const acidHeight = 15;
+    const fontHeight = 16; // this is the font maximum
+    const acidMargin = 2; // space below amino acids
+    const codonWidth = 29;
+    const codonMargin = codonWidth * 0.1; // space between codons
+    const chainOffset = 9; // space before the acid chain starts
 
-    const AminoAcids = this.props.aminoAcids.split('').map((a, i) =>
-      <AminoAcid type={a} x={acidWidth/2 + (i * (acidWidth * 1.1))} y={3} width={acidWidth} key={i} />
-    )
+    const location = Math.floor((this.props.aminoAcids.length - 1) * this.props.selectionStart);
+    const AminoAcids = this.props.aminoAcids.split('').map((a, i) => {
+      const codonOffset = chainOffset + i * (codonWidth + codonMargin)
+      return (
+        <g key={i}>
+          <AminoAcid type={a} x={codonOffset + (codonWidth - acidWidth)/2} y={0} width={acidWidth} selected={location === i} />
+          <Codon dna={this.props.alleles.substring(i * 3, (i + 1) * 3)} x={codonOffset} y={acidHeight + acidMargin + fontHeight} />
+        </g>
+      )
+    })
 
     const marks = this.props.marks.map(loc =>
       <rect key={loc} x={acidWidth/2 + (loc * (acidWidth * 1.1)) - 1} y="1" width="19" height="20" style={{fill: "#33F", stroke: "#AAF", strokeWidth: 2}} />
     )
 
+    const svgHeight = acidHeight + acidMargin + fontHeight * 1.1; // increase the font height slightly to account for descenders
+    const svgWidth = (codonWidth + codonMargin) * this.props.aminoAcids.length + chainOffset;
     return (
       <div className={wrapperClass} style={frameStyle} ref={this.wrapperRef}>
-        <div className="alleles" style={allelesStyle} ref={this.alleleStringRef}>
-          <svg width={1000} height={22} viewBox="0 0 1000 22">
-            <path d="M9,12L981,12" style={{stroke: '#AAA', strokeWidth: '2px'}} />
+        <div className="amino-acids" style={allelesStyle} ref={this.alleleStringRef}>
+          <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+            <path d={`M${chainOffset},9L${svgWidth - chainOffset},9`} style={{stroke: '#AAA', strokeWidth: '2px'}} />
             { marks }
             { AminoAcids }
           </svg>
@@ -162,6 +178,7 @@ class AminoAcidSlider extends Component {
 
 AminoAcidSlider.propTypes = {
   aminoAcids: PropTypes.string,
+  alleles: PropTypes.string,
   width: PropTypes.number,
   selectionStart: PropTypes.number,
   selectionWidth: PropTypes.number,
@@ -172,6 +189,7 @@ AminoAcidSlider.propTypes = {
 
 AminoAcidSlider.defaultProps = {
   aminoAcids: "",
+  alleles: "",
   width: 600,
   selectionWidth: 90,
   selectionStart: 0,

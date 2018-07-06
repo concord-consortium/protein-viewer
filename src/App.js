@@ -1,10 +1,16 @@
 import React, { Component } from 'react';
 import './App.css';
 import ProteinViewer from './components/protein-viewer';
+import { convertAminoAcidsToCodons } from './util/codon-utils';
+import getParameterByName from './util/urlUtils';
+
+const workingAminoAcids = "ardearcfcaedearcdeadrcdfearcccdedeafdeadrcdarcaeeacer"
+const brokenAminoAcids = "ardearcfcaedearcdeadrcdfearcccdedeafdecdrcdarcaeeacer"
 
 const proteins = {
   working: {
-    aminoAcids: "abdeabcfcaedeabcdeadbcdfeabcccdedeafdeadbcdabcaeeaceb",
+    aminoAcids: workingAminoAcids,
+    alleles: convertAminoAcidsToCodons(workingAminoAcids),
     svgImage: `
       <g id="receptor-bound">
         <path d="M13,21.006L13,29.006L35,43.006L56,29.006L58,13.006" style="fill:none;stroke:rgb(255,93,189);stroke-width:10px;"/>
@@ -17,7 +23,8 @@ const proteins = {
     `
   },
   broken: {
-    aminoAcids: "abdeabcfcaedeabcdeadbcdfeabcccdedeafdecdbcdabcaeeaceb",
+    aminoAcids: brokenAminoAcids,
+    alleles: convertAminoAcidsToCodons(brokenAminoAcids),
     svgImage: `
       <g id="receptor-broken">
         <path d="M13,21.006L13,29.006L35,43.006L56,29.006L58,13.006" style="fill:none;stroke:rgb(255,93,189);stroke-width:10px;"/>
@@ -26,16 +33,6 @@ const proteins = {
       </g>
     `
   }
-}
-
-const getParameterByName = (name) => {
-  const url = window.location.href;
-  name = name.replace(/[[]]/g, "\\$&");
-  var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-      results = regex.exec(url);
-  if (!results) return null;
-  if (!results[2]) return '';
-  return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
 class App extends Component {
@@ -67,8 +64,10 @@ class App extends Component {
             <ProteinViewer
               aminoAcids={visibleProteins[0].aminoAcids}
               svgImage={visibleProteins[0].svgImage}
+              alleles={visibleProteins[0].alleles}
               aminoAcids2={visibleProteins[1].aminoAcids}
               svgImage2={visibleProteins[1].svgImage}
+              alleles2={visibleProteins[1].alleles}
             />
           </div>
         }
@@ -78,6 +77,7 @@ class App extends Component {
           <div className="example">
             <ProteinViewer
               aminoAcids={visibleProteins[0].aminoAcids}
+              alleles={visibleProteins[0].alleles}
               svgImage={visibleProteins[0].svgImage}
             />
           </div>
