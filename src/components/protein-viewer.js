@@ -90,6 +90,7 @@ class ProteinViewer extends Component {
         {this.state.showingInfoBox &&
           <InfoBox
             aminoAcids={this.props.aminoAcids}
+            secondAminoAcids={this.props.aminoAcids2}
             selection={this.state.selectionStart}
             marks={this.state.marks}
             onMarkLocation={this.handleMark}
