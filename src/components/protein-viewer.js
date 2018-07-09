@@ -93,9 +93,6 @@ class ProteinViewer extends Component {
             selection={this.state.selectionStart}
             marks={this.state.marks}
             onMarkLocation={this.handleMark}
-            // FIXME
-            top={33}
-            left={-83}
             width={274}
           />
         }

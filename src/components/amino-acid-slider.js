@@ -139,10 +139,6 @@ class AminoAcidSlider extends Component {
       <rect x={acidWidth/2 + (loc * (acidWidth * 1.1)) - 1} y="1" width="19" height="20" style={{fill: "#33F", stroke: "#AAF", strokeWidth: 2}} />
     )
 
-    console.log("====")
-    console.log(this.props.marks)
-    console.log(marks)
-
     return (
       <div className={wrapperClass} style={frameStyle} ref={this.wrapperRef}>
         <div className="alleles" style={allelesStyle} ref={this.alleleStringRef}>
