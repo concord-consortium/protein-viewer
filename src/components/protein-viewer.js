@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import AminoAcidSlider from './amino-acid-slider'
-import Protein from './protein'
+import ProteinBuilder from './protein-builder'
 import InfoBox from './info-box';
 import './protein-viewer.css';
 
@@ -49,7 +49,7 @@ class ProteinViewer extends Component {
     return (
       <div className="protein-viewer">
         <div className="proteins">
-          <Protein
+          <ProteinBuilder
             width={300}
             selectionStart={this.state.selectionStart}
             viewBox="0 0 222 206"
@@ -57,7 +57,7 @@ class ProteinViewer extends Component {
             marks={this.state.marks.map(loc => loc / this.props.aminoAcids.length)}
           />
           { this.props.svgImage2 &&
-            <Protein
+            <ProteinBuilder
               width={300}
               selectionStart={this.state.selectionStart}
               viewBox="0 0 222 206"

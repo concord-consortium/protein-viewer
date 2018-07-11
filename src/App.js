@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
-import ProteinViewer from './components/protein-viewer';
+import ProteinBuilder from './components/protein-builder';
 
 const proteins = {
   working: {
@@ -30,7 +30,7 @@ const proteins = {
 
 const getParameterByName = (name) => {
   const url = window.location.href;
-  name = name.replace(/[\[\]]/g, "\\$&");
+  name = name.replace(/[[\]]/g, "\\$&");
   var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
       results = regex.exec(url);
   if (!results) return null;
@@ -61,27 +61,11 @@ class App extends Component {
 
     return (
       <div className="App">
-
-        { (visibleProteins.length === 2) &&
-          <div className="example">
-            <ProteinViewer
-              aminoAcids={visibleProteins[0].aminoAcids}
-              svgImage={visibleProteins[0].svgImage}
-              aminoAcids2={visibleProteins[1].aminoAcids}
-              svgImage2={visibleProteins[1].svgImage}
-            />
-          </div>
-        }
-
-
-        { (visibleProteins.length === 1 || this.state.demo) &&
-          <div className="example">
-            <ProteinViewer
-              aminoAcids={visibleProteins[0].aminoAcids}
+        <div className="example">
+            <ProteinBuilder
               svgImage={visibleProteins[0].svgImage}
             />
           </div>
-        }
       </div>
     );
   }
