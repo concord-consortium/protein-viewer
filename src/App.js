@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
-import AlleleSlider from './components/allele-slider'
-import Protein from './components/protein'
 import './App.css';
-import AminoAcidSlider from './components/amino-acid-slider'
-import InfoBox from './components/info-box';
+import ProteinViewer from './components/protein-viewer';
 
 const proteins = {
   working: {
@@ -54,139 +51,35 @@ class App extends Component {
     }
 
     this.state = {
-      selectionStart0: 0,
-      selectionStart1: 0,
-      showingInfoBox0: false,
-      showingInfoBox1: false,
-      marks0: [],
-      marks1: [],
       demo,
       display
     };
-
-    this.handleUpdateSelectionStart = this.handleUpdateSelectionStart.bind(this);
-    this.handleAminoAcidSliderClick = this.handleAminoAcidSliderClick.bind(this);
-    this.handleMark = this.handleMark.bind(this);
-  }
-
-  handleUpdateSelectionStart(box) {
-    const whichSelection = `selectionStart${box}`;
-    return (selectionStart) =>
-      this.setState({
-        [whichSelection]: selectionStart
-      });
-  }
-
-  handleAminoAcidSliderClick(box) {
-    const whichInfoBox = `showingInfoBox${box}`;
-    return () =>
-      this.setState({
-        [whichInfoBox]: !this.state[whichInfoBox]
-      });
-  }
-
-  handleMark(box) {
-    const whichMarks = `marks${box}`;
-    return (location) => {
-      const existingMarks = this.state[whichMarks];
-      if (existingMarks.indexOf(location) > -1) {
-        existingMarks.splice(existingMarks.indexOf(location), 1);
-      } else {
-        existingMarks.push(location);
-      }
-      this.setState({
-        [whichMarks]: existingMarks
-      });
-    }
   }
 
   render() {
+    const visibleProteins = this.state.display.map(d => proteins[d]);
+
     return (
       <div className="App">
-        {(this.state.display.length === 2) &&
+
+        { (visibleProteins.length === 2) &&
           <div className="example">
-            <div className="two-proteins">
-              <Protein
-                width={300}
-                selectionStart={this.state.selectionStart0}
-                viewBox="0 0 222 206"
-                svg={proteins[this.state.display[0]].svgImage}
-                marks={this.state.marks0.map(loc => loc / proteins[this.state.display[0]].aminoAcids.length)}
-              />
-              <Protein
-                width={300}
-                selectionStart={this.state.selectionStart0}
-                viewBox="0 0 222 206"
-                highlightColor="4, 255, 0"
-                svg={proteins[this.state.display[1]].svgImage}
-                marks={this.state.marks0.map(loc => loc / proteins[this.state.display[0]].aminoAcids.length)}
-              />
-            </div>
-            <div className="two-sliders">
-              <AminoAcidSlider
-                aminoAcids={proteins[this.state.display[0]].aminoAcids}
-                width={300}
-                selectionStart={this.state.selectionStart0}
-                updateSelectionStart={this.handleUpdateSelectionStart(0)}
-                onClick={this.handleAminoAcidSliderClick(0)}
-                marks={this.state.marks0}
-              />
-              <AminoAcidSlider
-                aminoAcids={proteins[this.state.display[1]].aminoAcids}
-                width={300}
-                highlightColor="4, 255, 0"
-                selectionStart={this.state.selectionStart0}
-                updateSelectionStart={this.handleUpdateSelectionStart(0)}
-                onClick={this.handleAminoAcidSliderClick(0)}
-                marks={this.state.marks0}
-              />
-              {this.state.showingInfoBox0 &&
-                <InfoBox
-                  aminoAcids={proteins[this.state.display[0]].aminoAcids}
-                  secondAminoAcids={proteins[this.state.display[1]].aminoAcids}
-                  selection={this.state.selectionStart0}
-                  marks={this.state.marks0}
-                  onMarkLocation={this.handleMark(0)}
-                  // FIXME
-                  top={285}
-                  left={76}
-                  width={274}
-                />
-              }
-            </div>
+            <ProteinViewer
+              aminoAcids={visibleProteins[0].aminoAcids}
+              svgImage={visibleProteins[0].svgImage}
+              aminoAcids2={visibleProteins[1].aminoAcids}
+              svgImage2={visibleProteins[1].svgImage}
+            />
           </div>
         }
 
 
-        {(this.state.display.length === 1 || this.state.demo) &&
+        { (visibleProteins.length === 1 || this.state.demo) &&
           <div className="example">
-            <Protein
-              width={300}
-              selectionStart={this.state.selectionStart1}
-              viewBox="0 0 222 206"
-              svg={proteins[this.state.display[0]].svgImage}
-              marks={this.state.marks1.map(loc => loc / proteins[this.state.display[0]].aminoAcids.length)}
+            <ProteinViewer
+              aminoAcids={visibleProteins[0].aminoAcids}
+              svgImage={visibleProteins[0].svgImage}
             />
-            <AminoAcidSlider
-              aminoAcids={proteins[this.state.display[0]].aminoAcids}
-              width={300}
-              selectionStart={this.state.selectionStart1}
-              updateSelectionStart={this.handleUpdateSelectionStart(1)}
-              onClick={this.handleAminoAcidSliderClick(1)}
-              marks={this.state.marks1}
-            />
-            {this.state.showingInfoBox1 &&
-              <InfoBox
-                aminoAcids={proteins[this.state.display[0]].aminoAcids}
-                selection={this.state.selectionStart1}
-                marks={this.state.marks1}
-                onMarkLocation={this.handleMark(1)}
-                // FIXME
-                top={240}
-                left={-71}
-                width={274}
-              />
-            }
           </div>
         }
       </div>

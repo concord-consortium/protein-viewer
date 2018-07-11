@@ -18,11 +18,9 @@ class InfoBox extends Component {
         <p>
           <b>Name:</b> {aminoAcid.name}
         </p>
-        <p>
-          <ul>
-            {description}
-          </ul>
-        </p>
+        <ul>
+          {description}
+        </ul>
       </div>
     )
   }
@@ -40,32 +38,30 @@ class InfoBox extends Component {
     }
 
     const style = {
-      top: this.props.top,
-      left: this.props.left + (this.props.selection * this.props.width)
-    }
-    if (secondAminoAcid) {
-      style.left -= 89;
+      marginLeft: (this.props.selection * this.props.width) - (this.props.width/2),
     }
 
     const marked = this.props.marks.indexOf(location) > -1;
 
     return (
-      <div className="info-box" style={style}>
-        <div className="info-wrapper">
-          { this.renderInfo(aminoAcid) }
-          { secondAminoAcid && this.renderInfo(secondAminoAcid) }
-        </div>
-        <div>
-          <label>
-            <input
-              name="isGoing"
-              type="checkbox"
-              checked={marked}
-              onChange={() => {
-                this.props.onMarkLocation && this.props.onMarkLocation(location)
-              }} />
-              Mark this location
-          </label>
+      <div className="info-box-wrapper">
+        <div className="info-box" style={style}>
+          <div className="info-wrapper">
+            { this.renderInfo(aminoAcid) }
+            { secondAminoAcid && this.renderInfo(secondAminoAcid) }
+          </div>
+          <div>
+            <label>
+              <input
+                name="isGoing"
+                type="checkbox"
+                checked={marked}
+                onChange={() => {
+                  this.props.onMarkLocation && this.props.onMarkLocation(location)
+                }} />
+                Mark this location
+            </label>
+          </div>
         </div>
       </div>
     );
