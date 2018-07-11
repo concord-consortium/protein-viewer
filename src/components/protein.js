@@ -51,7 +51,7 @@ class Protein extends Component {
       const length = 10;
       const d = `M ${Math.sin(angle) * length + point.x} ${-Math.cos(angle) * length + point.y}, L ${-Math.sin(angle) * length + point.x} ${Math.cos(angle) * length + point.y}`
 
-      return <path d={d} style={{stroke: "#33F", strokeWidth: 3}} />
+      return <path key={loc} d={d} style={{stroke: "#33F", strokeWidth: 3}} />
     });
 
     return (
