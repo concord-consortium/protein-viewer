@@ -82,6 +82,7 @@ class ProteinViewer extends Component {
             aminoAcids={this.props.aminoAcids}
             alleles={this.props.alleles}
             width={300}
+            selectionWidth={this.state.showingAlleles ? 150 : 90}
             selectionStart={this.state.selectionStart}
             updateSelectionStart={this.handleUpdateSelectionStart}
             onClick={this.handleAminoAcidSliderClick}
@@ -95,6 +96,7 @@ class ProteinViewer extends Component {
               aminoAcids={this.props.aminoAcids2}
               alleles={this.props.alleles2}
               width={300}
+              selectionWidth={this.state.showingAlleles ? 150 : 90}
               selectionStart={this.state.selectionStart}
               updateSelectionStart={this.handleUpdateSelectionStart}
               onClick={this.handleAminoAcidSliderClick}
