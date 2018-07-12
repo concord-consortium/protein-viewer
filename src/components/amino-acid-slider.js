@@ -157,13 +157,6 @@ class AminoAcidSlider extends Component {
     const svgWidth = (codonWidth + codonMargin) * this.props.aminoAcids.length + chainOffset;
     return (
       <div className={wrapperClass} style={frameStyle} ref={this.wrapperRef}>
-        <div className="amino-acids" style={allelesStyle} ref={this.alleleStringRef}>
-          <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-            <path d={`M${chainOffset},9L${svgWidth - chainOffset},9`} style={{stroke: '#AAA', strokeWidth: '2px'}} />
-            { marks }
-            { AminoAcids }
-          </svg>
-        </div>
         <div
           className="selection"
           style={selectStyle}
@@ -171,6 +164,13 @@ class AminoAcidSlider extends Component {
           onMouseDown={this.onMouseDown}
           onClick={this.onClick}
         />
+        <div className="amino-acids" style={allelesStyle} ref={this.alleleStringRef}>
+          <svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+            <path d={`M${chainOffset},9L${svgWidth - chainOffset},9`} style={{stroke: '#AAA', strokeWidth: '2px'}} />
+            { marks }
+            { AminoAcids }
+          </svg>
+        </div>
       </div>
     );
   }
