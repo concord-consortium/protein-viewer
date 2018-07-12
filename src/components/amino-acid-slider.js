@@ -40,6 +40,12 @@ class AminoAcidSlider extends Component {
       document.removeEventListener('mousemove', this.onMouseMove)
       document.removeEventListener('mouseup', this.onMouseUp)
     }
+
+    if (this.state.allelesWidth !== this.alleleStringRef.current.scrollWidth) {
+      this.setState({
+        allelesWidth: this.alleleStringRef.current.scrollWidth
+      });
+    }
   }
 
   componentDidMount() {
@@ -126,15 +132,14 @@ class AminoAcidSlider extends Component {
     }
 
     const allelesStyle = {
-      left: `-${this.state.allelesOffset}px`,
-      width: `${this.state.allelesWidth}px`
+      left: `-${this.state.allelesOffset}px`
     }
 
     const acidWidth = 17;
     const acidHeight = 15;
     const fontHeight = 16; // this is the font maximum
     const acidMargin = 2; // space below amino acids
-    const codonWidth = 29;
+    const codonWidth = this.props.showAlleles ? 29 : acidWidth;
     const codonMargin = codonWidth * 0.1; // space between codons
     const chainOffset = 9; // space before the acid chain starts
 
