@@ -143,7 +143,7 @@ class AminoAcidSlider extends Component {
       const codonOffset = chainOffset + i * (codonWidth + codonMargin)
       return (
         <g key={i}>
-          <AminoAcid type={a} x={codonOffset + (codonWidth - acidWidth)/2} y={0} width={acidWidth} selected={location === i} />
+          <AminoAcid type={a} x={codonOffset + (codonWidth - acidWidth)/2} y={0} width={acidWidth} dimmed={this.props.dimUnselected && location !== i} />
           <Codon dna={this.props.alleles.substring(i * 3, (i + 1) * 3)} x={codonOffset} y={acidHeight + acidMargin + fontHeight} />
         </g>
       )

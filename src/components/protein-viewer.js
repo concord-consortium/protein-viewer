@@ -86,6 +86,7 @@ class ProteinViewer extends Component {
             updateSelectionStart={this.handleUpdateSelectionStart}
             onClick={this.handleAminoAcidSliderClick}
             marks={this.state.marks}
+            dimUnselected={this.state.showingInfoBox}
           />
           { 
             this.props.aminoAcids2 &&
@@ -97,6 +98,7 @@ class ProteinViewer extends Component {
               updateSelectionStart={this.handleUpdateSelectionStart}
               onClick={this.handleAminoAcidSliderClick}
               marks={this.state.marks}
+              dimUnselected={this.state.showingInfoBox}
               highlightColor="4, 255, 0"
             />
           }
