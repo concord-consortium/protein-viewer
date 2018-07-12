@@ -145,13 +145,14 @@ class AminoAcidSlider extends Component {
 
     const location = Math.floor((this.props.aminoAcids.length - 1) * this.props.selectionStart);
     const AminoAcids = this.props.aminoAcids.split('').map((a, i) => {
-      const codonOffset = chainOffset + i * (codonWidth + codonMargin)
+      const codonOffset = chainOffset + i * (codonWidth + codonMargin);
+      const dimmed = this.props.dimUnselected && location !== i;
       return (
         <g key={i}>
-          <AminoAcid type={a} x={codonOffset + (codonWidth - acidWidth)/2} y={0} width={acidWidth} dimmed={this.props.dimUnselected && location !== i} />
+          <AminoAcid type={a} x={codonOffset + (codonWidth - acidWidth)/2} y={0} width={acidWidth} dimmed={dimmed} />
           {
             this.props.showAlleles &&
-            <Codon dna={this.props.alleles.substring(i * 3, (i + 1) * 3)} x={codonOffset} y={acidHeight + acidMargin + fontHeight} />
+            <Codon dna={this.props.alleles.substring(i * 3, (i + 1) * 3)} x={codonOffset} y={acidHeight + acidMargin + fontHeight} dimmed={dimmed} />
           }
         </g>
       )
