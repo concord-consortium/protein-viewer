@@ -144,7 +144,10 @@ class AminoAcidSlider extends Component {
       return (
         <g key={i}>
           <AminoAcid type={a} x={codonOffset + (codonWidth - acidWidth)/2} y={0} width={acidWidth} dimmed={this.props.dimUnselected && location !== i} />
-          <Codon dna={this.props.alleles.substring(i * 3, (i + 1) * 3)} x={codonOffset} y={acidHeight + acidMargin + fontHeight} />
+          {
+            this.props.showAlleles &&
+            <Codon dna={this.props.alleles.substring(i * 3, (i + 1) * 3)} x={codonOffset} y={acidHeight + acidMargin + fontHeight} />
+          }
         </g>
       )
     })
@@ -153,7 +156,10 @@ class AminoAcidSlider extends Component {
       <rect key={loc} x={acidWidth/2 + (loc * (acidWidth * 1.1)) - 1} y="1" width="19" height="20" style={{fill: "#33F", stroke: "#AAF", strokeWidth: 2}} />
     )
 
-    const svgHeight = acidHeight + acidMargin + fontHeight * 1.1; // increase the font height slightly to account for descenders
+    let svgHeight = acidHeight + acidMargin;
+    if (this.props.showAlleles) {
+      svgHeight += fontHeight;
+    }
     const svgWidth = (codonWidth + codonMargin) * this.props.aminoAcids.length + chainOffset;
     return (
       <div className={wrapperClass} style={frameStyle} ref={this.wrapperRef}>
@@ -184,6 +190,7 @@ AminoAcidSlider.propTypes = {
   selectionWidth: PropTypes.number,
   highlightColor: PropTypes.string,
   updateSelectionStart: PropTypes.func,
+  showAlleles: PropTypes.bool,
   marks: PropTypes.array
 };
 
@@ -193,6 +200,7 @@ AminoAcidSlider.defaultProps = {
   width: 600,
   selectionWidth: 90,
   selectionStart: 0,
+  showAlleles: false,
   marks: []
 };
 

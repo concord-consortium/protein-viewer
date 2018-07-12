@@ -16,7 +16,7 @@ class ProteinViewer extends Component {
     this.state = {
       selectionStart: 0,
       showingInfoBox: false,
-      showingAlleles: !!getParameterByName('allelesVisible'),
+      showingAlleles: !!getParameterByName('dnaVisible'),
       marks: []
     };
 
@@ -86,6 +86,7 @@ class ProteinViewer extends Component {
             updateSelectionStart={this.handleUpdateSelectionStart}
             onClick={this.handleAminoAcidSliderClick}
             marks={this.state.marks}
+            showAlleles={this.state.showingAlleles}
             dimUnselected={this.state.showingInfoBox}
           />
           { 
@@ -99,6 +100,7 @@ class ProteinViewer extends Component {
               onClick={this.handleAminoAcidSliderClick}
               marks={this.state.marks}
               dimUnselected={this.state.showingInfoBox}
+              showAlleles={this.state.showingAlleles}
               highlightColor="4, 255, 0"
             />
           }
@@ -114,7 +116,7 @@ class ProteinViewer extends Component {
           />
         }
         {
-          getParameterByName('allelesSwitchable') &&
+          getParameterByName('dnaSwitchable') &&
           <FormControlLabel
             control={
               <Checkbox
@@ -122,7 +124,7 @@ class ProteinViewer extends Component {
                 onChange={this.handleAllelesToggle}
               />
             }
-            label="Show Alleles"
+            label="Show DNA"
           />
         }
       </div>
