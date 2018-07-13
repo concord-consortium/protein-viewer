@@ -4,8 +4,8 @@ import ProteinViewer from './components/protein-viewer';
 import { convertAminoAcidsToCodons } from './util/codon-utils';
 import getParameterByName from './util/urlUtils';
 
-const workingAminoAcids = "ardearcfcaedearcdeadrcdfearcccdedeafdeadrcdarcaeeacer"
-const brokenAminoAcids = "ardearcfcaedearcdeadrcdfearcccdedeafdecdrcdarcaeeacer"
+const workingAminoAcids = "ARDEARCFCAEDEARCDEADRCDFEARCCCDEDEAFDEADRCDARCAEEACER"
+const brokenAminoAcids = "ARDEARCFCAEDEARCDEADRCDFEARCCCDEDEAFDECDRCDARCAEEACER"
 
 const proteins = {
   working: {

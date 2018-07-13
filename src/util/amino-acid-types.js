@@ -1,25 +1,25 @@
 export default {
-  a: {
+  A: {
     name: "Alanine (A)",
     description: ["Hydrophobic", "Non-Polar", "Neutral"]
   },
-  r: {
+  R: {
     name: "Arginine (R)",
     description: ["Hydrophilic", "Polar", "Charged (+)"]
   },
-  c: {
+  C: {
     name: "Cysteine (C)",
     description: ["Hydrophobic", "Polar", "Neutral"]
   },
-  d: {
+  D: {
     name: "Aspartate (D)",
     description: ["Hydrophilic", "Polar", "Charged (-)"]
   },
-  e: {
+  E: {
     name: "Glutamate (E)",
     description: ["Hydrophilic", "Polar", "Charged (-)"]
   },
-  f: {
+  F: {
     name: "Phenylalanine (F)",
     description: ["Hydrophobic", "Aromatic", "Neutral"]
   },
