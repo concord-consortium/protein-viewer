@@ -33,7 +33,6 @@ const simpleCircle = ({width, x, y, strokeWidth, stroke, fill, scale}) => {
 }
 
 const closedPath = ({d, x, y, strokeWidth, stroke, fill, scale}) => {
-  const orig = "M16.023,3.044L42.018,7.799L46.662,34.567L23.535,46.357L4.6,26.875L16.023,3.044Z";
   const scaledD = scalePath(d, scale, x, y);
   const scaledStrokeWidth = strokeWidth * scale;
   return (
