@@ -3,10 +3,13 @@ import PropTypes from 'prop-types';
 import './info-box.css';
 import AminoAcid from './amino-acid';
 import types from '../util/amino-acid-types'
+import { getFullNameForAminoAcid, expandAminoAcidAbbreviation} from '../util/codon-utils'
 
 class InfoBox extends Component {
 
   renderInfo(aminoAcid) {
+    const name = `${getFullNameForAminoAcid(aminoAcid)} (${expandAminoAcidAbbreviation(aminoAcid)})`
+
     const type = types[aminoAcid];
     const description = type.description.map((d, i) => <li key={i}>{d}</li>)
 
@@ -16,7 +19,7 @@ class InfoBox extends Component {
           <AminoAcid  type={aminoAcid} width={30}/>
         </svg>
         <p>
-          <b>Name:</b> {aminoAcid.name}
+          <b>Name:</b> {name}
         </p>
         <ul>
           {description}
