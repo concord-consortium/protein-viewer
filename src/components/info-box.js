@@ -29,22 +29,26 @@ class InfoBox extends Component {
   }
 
   render() {
-    const location = Math.floor((this.props.aminoAcids.length - 1) * this.props.selection);
-    const aminoAcid = this.props.aminoAcids.charAt(location) || "e";
+    const {selection, aminoAcids, secondAminoAcids, width, marks} = this.props;
+
+    const aminoAcid = aminoAcids.charAt(selection);
 
     let secondAminoAcid;
-    if (this.props.secondAminoAcids) {
-      secondAminoAcid = this.props.secondAminoAcids.charAt(location) || "e";
+    if (secondAminoAcids) {
+      secondAminoAcid = secondAminoAcids.charAt(selection);
       if (secondAminoAcid === aminoAcid) {
         secondAminoAcid = null;
       }
     }
 
+    const percent = selection/aminoAcids.length;
+    // need box to move quicker at the ends and slower in the middle to match selection box
+    const transformedPercent = percent < 0.1 ? percent * 2 : percent > 0.9 ? 0.8 + ((percent - 0.9) * 2) : 0.125 + 0.75 * percent;
     const style = {
-      marginLeft: (this.props.selection * this.props.width) - (this.props.width/2),
+      marginLeft: (transformedPercent * width) - (width/2),
     }
 
-    const marked = this.props.marks.indexOf(location) > -1;
+    const marked = marks.includes(selection);
 
     return (
       <div className="info-box-wrapper">
@@ -60,7 +64,7 @@ class InfoBox extends Component {
                 type="checkbox"
                 checked={marked}
                 onChange={() => {
-                  this.props.onMarkLocation && this.props.onMarkLocation(location)
+                  this.props.onMarkLocation && this.props.onMarkLocation(selection)
                 }} />
                 Mark this location
             </label>

@@ -14,21 +14,29 @@ class ProteinViewer extends Component {
     super();
 
     this.state = {
-      selectionStart: 0,
+      selectionStartPercent: 0,
+      selectedAminoAcidIndex: 0,
       showingInfoBox: false,
       showingAlleles: !!getParameterByName('dnaVisible'),
       marks: []
     };
 
     this.handleUpdateSelectionStart = this.handleUpdateSelectionStart.bind(this);
+    this.handleUpdateSelectedAminoAcidIndex = this.handleUpdateSelectedAminoAcidIndex.bind(this);
     this.handleAminoAcidSliderClick = this.handleAminoAcidSliderClick.bind(this);
     this.handleMark = this.handleMark.bind(this);
   }
 
-  handleUpdateSelectionStart(selectionStart) {
+  handleUpdateSelectionStart(selectionStartPercent) {
     this.setState({
-      selectionStart: selectionStart
+      selectionStartPercent
     });
+  }
+
+  handleUpdateSelectedAminoAcidIndex(selectedAminoAcidIndex) {
+    this.setState({
+      selectedAminoAcidIndex
+    })
   }
 
   handleAminoAcidSliderClick() {
@@ -56,49 +64,63 @@ class ProteinViewer extends Component {
   }
 
   render() {
+    const {selectionWidth, aminoAcids, aminoAcids2, aminoAcidWidth, width, svgImage, svgImage2, alleles, alleles2} = this.props;
+
+    const protein1SelectionPercent =  selectionWidth / (aminoAcids.length * aminoAcidWidth);
+    let protein2SelectionPercent;
+    if (aminoAcids2) {
+      protein2SelectionPercent = selectionWidth / (aminoAcids2.length * aminoAcidWidth);
+    }
+
     return (
       <div className="protein-viewer">
         <div className="proteins">
           <Protein
-            width={300}
-            selectionStart={this.state.selectionStart}
+            width={width}
+            selectionStartPercent={this.state.selectionStartPercent}
+            selectionPercent={protein1SelectionPercent}
             viewBox="0 0 222 206"
-            svg={this.props.svgImage}
-            marks={this.state.marks.map(loc => loc / this.props.aminoAcids.length)}
+            svg={svgImage}
+            marks={this.state.marks.map(loc => (loc + 0.5) / aminoAcids.length)}
           />
-          { this.props.svgImage2 &&
+          { svgImage2 &&
             <Protein
-              width={300}
-              selectionStart={this.state.selectionStart}
+              width={width}
+              selectionStartPercent={this.state.selectionStartPercent}
+              selectionPercent={protein2SelectionPercent}
               viewBox="0 0 222 206"
               highlightColor="4, 255, 0"
-              svg={this.props.svgImage2}
-              marks={this.state.marks.map(loc => loc / this.props.aminoAcids.length)}
+              svg={svgImage2}
+              marks={this.state.marks.map(loc => (loc + 0.5) / aminoAcids2.length)}
             />
           }
         </div>
         <div className="amino-acids">
           <AminoAcidSlider
-            aminoAcids={this.props.aminoAcids}
-            alleles={this.props.alleles}
-            width={300}
-            selectionWidth={this.state.showingAlleles ? 150 : 90}
-            selectionStart={this.state.selectionStart}
+            aminoAcids={aminoAcids}
+            alleles={alleles}
+            width={width}
+            aminoAcidWidth={aminoAcidWidth}
+            selectionWidth={selectionWidth}
+            selectionStartPercent={this.state.selectionStartPercent}
             updateSelectionStart={this.handleUpdateSelectionStart}
+            updateSelectedAminoAcidIndex={this.handleUpdateSelectedAminoAcidIndex}
             onClick={this.handleAminoAcidSliderClick}
             marks={this.state.marks}
             showAlleles={this.state.showingAlleles}
             dimUnselected={this.state.showingInfoBox}
           />
-          { 
-            this.props.aminoAcids2 &&
+          {
+            aminoAcids2 &&
             <AminoAcidSlider
-              aminoAcids={this.props.aminoAcids2}
-              alleles={this.props.alleles2}
-              width={300}
-              selectionWidth={this.state.showingAlleles ? 150 : 90}
-              selectionStart={this.state.selectionStart}
+              aminoAcids={aminoAcids2}
+              alleles={alleles2}
+              width={width}
+              aminoAcidWidth={aminoAcidWidth}
+              selectionWidth={selectionWidth}
+              selectionStartPercent={this.state.selectionStartPercent}
               updateSelectionStart={this.handleUpdateSelectionStart}
+              updateSelectedAminoAcidIndex={this.handleUpdateSelectedAminoAcidIndex}
               onClick={this.handleAminoAcidSliderClick}
               marks={this.state.marks}
               dimUnselected={this.state.showingInfoBox}
@@ -109,9 +131,9 @@ class ProteinViewer extends Component {
         </div>
         {this.state.showingInfoBox &&
           <InfoBox
-            aminoAcids={this.props.aminoAcids}
-            secondAminoAcids={this.props.aminoAcids2}
-            selection={this.state.selectionStart}
+            aminoAcids={aminoAcids}
+            secondAminoAcids={aminoAcids2}
+            selection={this.state.selectedAminoAcidIndex}
             marks={this.state.marks}
             onMarkLocation={this.handleMark}
             width={274}
@@ -140,7 +162,25 @@ ProteinViewer.propTypes = {
   svgImage: PropTypes.string,
   aminoAcids2: PropTypes.string,
   alleles2: PropTypes.string,
-  svgImage2: PropTypes.string
+  svgImage2: PropTypes.string,
+  /** Width of the protein and slider elements, in pixels */
+  width: PropTypes.number,
+  /** Width of one amino acid in the slider elements, in pixels */
+  aminoAcidWidth: PropTypes.number,
+  /** Width of one codon in the slider elements, in pixels */
+  codonWidth: PropTypes.number,
+  /** Width of the selection box, in pixels. Note this, the `aminoAcidWidth` prop,
+   * and the length of the amino acid chain will together combine to affect the
+   * percent of protein selected. */
+  selectionWidth: PropTypes.number
 };
+
+ProteinViewer.defaultProps = {
+  width: 300,
+  selectionWidth: 70,
+  aminoAcidWidth: 17,
+  codonWidth: 29
+};
+
 
 export default ProteinViewer;
