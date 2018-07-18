@@ -28,6 +28,7 @@ class AminoAcidSlider extends Component {
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
     this.onClick = this.onClick.bind(this);
+    this.onAminoAcidSelection = this.onAminoAcidSelection.bind(this);
   }
 
   componentDidUpdate(props, state) {
@@ -64,13 +65,17 @@ class AminoAcidSlider extends Component {
 
   onMouseMove(evt) {
     if (!this.state.dragging) return;
+
     const dx = evt.pageX - this.state.draggingXStart;
     const newStartPercent = this.state.draggingInitialStartPercent + (dx / (this.props.width - this.actualSelectionWidth));
 
     const maxSelectionStartPercent = 1 - this.aminoAcidSelectionWidthPercent;
 
     this.props.updateSelectionStart(Math.max(0, Math.min(newStartPercent, maxSelectionStartPercent)));
-    this.props.updateSelectedAminoAcidIndex(this.currentlySelectedAminoAcidIndex);
+
+    if (this.currentlySelectedAminoAcidIndex !== this.props.selectedAminoAcidIndex) {
+      this.props.updateSelectedAminoAcidIndex(this.currentlySelectedAminoAcidIndex, this.getXLocationOfAminoAcid(this.currentlySelectedAminoAcidIndex));
+    }
 
     evt.stopPropagation();
     evt.preventDefault();
@@ -84,6 +89,14 @@ class AminoAcidSlider extends Component {
 
     if (this.props.onClick) {
       this.props.onClick();
+    }
+  }
+
+  onAminoAcidSelection(index) {
+    return (evt) => {
+      this.props.updateSelectedAminoAcidIndex(index, this.getXLocationOfAminoAcid(index), true);
+      evt.stopPropagation();
+      evt.preventDefault();
     }
   }
 
@@ -140,11 +153,21 @@ class AminoAcidSlider extends Component {
     return Math.round(aaIndexStart + (numAAinSelectionBox * selectionPercentAlongBox));
   }
 
+  // returns x location within view of an amino acid, in pixels
+  getXLocationOfAminoAcid = (index) => {
+    // furthest left offset amino acid chain can be
+    const maxAminoAcidLeftShift = this.aminoAcidChainLength - this.props.width;
+    // current left shift
+    const aminoAcidLeftShift = maxAminoAcidLeftShift * this.travelPercent;
+
+    return (this.aminoAcidSpacing * index) - aminoAcidLeftShift + chainMargin
+  }
 
   render() {
     const {
       aminoAcids,
       alleles,
+      selectedAminoAcidIndex,
       width,
       aminoAcidWidth,
       dnaFontHeight,
@@ -160,10 +183,6 @@ class AminoAcidSlider extends Component {
 
     const acidMargin = 2; // space below amino acids
 
-    // furthest left offset amino acid chain can be
-    const maxAminoAcidLeftShift = this.aminoAcidChainLength - width;
-    // current left shift
-    const aminoAcidLeftShift = maxAminoAcidLeftShift * this.travelPercent;
     // furthest right offset selection box can be
     const maxSelectionBoxRightShift = width - this.actualSelectionWidth;
     // current selection box right offset
@@ -191,17 +210,17 @@ class AminoAcidSlider extends Component {
 
     // Returns an array of images containing both the AA shape and, optionally, the codon below
     const aminoAcidImages = aminoAcids.split('').map((a, i) => {
-      const x = (this.aminoAcidSpacing * i) - aminoAcidLeftShift + chainMargin;
+      const x = this.getXLocationOfAminoAcid(i);
 
       if (x < -this.aminoAcidSpacing || x > width) {
         return null;
       }
 
       // const codonOffset = chainOffset + i * (codonWidth + codonMargin);
-      const dimmed = dimUnselected && this.currentlySelectedAminoAcidIndex !== i;
+      const dimmed = dimUnselected && selectedAminoAcidIndex !== i;
       const selected = marks.includes(i);
       return (
-        <g key={i}>
+        <g key={i} onClick={this.onAminoAcidSelection(i)}>
           {
             selected &&
             <rect x={x + innerAminoAcidOffset - 1} y={1} width={aminoAcidWidth + 1} height={aminoAcidWidth + 2} style={{fill: "#33F", stroke: "#AAF", opacity: (dimmed ? 0.4 : 1), strokeWidth: 2}} />
@@ -223,8 +242,8 @@ class AminoAcidSlider extends Component {
       svgHeight += dnaFontHeight;
     }
 
-    const chainLineStart = aminoAcidLeftShift < this.aminoAcidSpacing / 2 ? (chainMargin + innerAminoAcidOffset) : 0;
-    const chainLineEnd = this.aminoAcidChainLength - aminoAcidLeftShift > (width + this.aminoAcidSpacing / 2) ? width : width - chainMargin - innerAminoAcidOffset - this.aminoAcidSpacing/2;
+    const chainLineStart = Math.max(0, this.getXLocationOfAminoAcid(0) + innerAminoAcidOffset);
+    const chainLineEnd = Math.min(width, this.getXLocationOfAminoAcid(aminoAcids.length-1) + innerAminoAcidOffset);
 
     return (
       <div className={wrapperClass} style={frameStyle} ref={this.wrapperRef}
@@ -254,6 +273,7 @@ AminoAcidSlider.propTypes = {
   codonWidth: PropTypes.number,
   selectionStartPercent: PropTypes.number,
   selectionWidth: PropTypes.number,
+  selectedAminoAcidIndex: PropTypes.number,
   highlightColor: PropTypes.string,
   marks: PropTypes.array,
   showAlleles: PropTypes.bool,

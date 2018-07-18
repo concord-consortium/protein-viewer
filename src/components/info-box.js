@@ -41,11 +41,8 @@ class InfoBox extends Component {
       }
     }
 
-    const percent = selection/aminoAcids.length;
-    // need box to move quicker at the ends and slower in the middle to match selection box
-    const transformedPercent = percent < 0.1 ? percent * 2 : percent > 0.9 ? 0.8 + ((percent - 0.9) * 2) : 0.125 + 0.75 * percent;
     const style = {
-      marginLeft: (transformedPercent * width) - (width/2),
+      marginLeft: this.props.selectedAminoAcidXLocation - (width/2),
     }
 
     const marked = marks.includes(selection);
@@ -81,6 +78,7 @@ InfoBox.propTypes = {
   aminoAcids: PropTypes.string,
   secondAminoAcids: PropTypes.string,
   selection: PropTypes.number,
+  selectedAminoAcidXLocation: PropTypes.number,
   marks: PropTypes.array,
   onMarkLocation: PropTypes.func
 };

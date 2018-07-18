@@ -16,6 +16,7 @@ class ProteinViewer extends Component {
     this.state = {
       selectionStartPercent: 0,
       selectedAminoAcidIndex: 0,
+      selectedAminoAcidXLocation: 0,
       showingInfoBox: false,
       showingAlleles: !!getParameterByName('dnaVisible'),
       marks: []
@@ -33,10 +34,22 @@ class ProteinViewer extends Component {
     });
   }
 
-  handleUpdateSelectedAminoAcidIndex(selectedAminoAcidIndex) {
-    this.setState({
-      selectedAminoAcidIndex
-    })
+  handleUpdateSelectedAminoAcidIndex(selectedAminoAcidIndex, selectedAminoAcidXLocation, showInfo) {
+      this.setState({
+        selectedAminoAcidIndex,
+        selectedAminoAcidXLocation
+      });
+
+    if (showInfo) {
+      if (!this.state.showingInfoBox || selectedAminoAcidIndex !== this.state.selectedAminoAcidIndex) {
+        this.setState({
+          showingInfoBox: true
+        });
+      } else {
+        this.setState({showingInfoBox: false});
+      }
+    }
+
   }
 
   handleAminoAcidSliderClick() {
@@ -104,6 +117,7 @@ class ProteinViewer extends Component {
             selectionWidth={selectionWidth}
             selectionStartPercent={this.state.selectionStartPercent}
             updateSelectionStart={this.handleUpdateSelectionStart}
+            selectedAminoAcidIndex={this.state.selectedAminoAcidIndex}
             updateSelectedAminoAcidIndex={this.handleUpdateSelectedAminoAcidIndex}
             onClick={this.handleAminoAcidSliderClick}
             marks={this.state.marks}
@@ -120,6 +134,7 @@ class ProteinViewer extends Component {
               selectionWidth={selectionWidth}
               selectionStartPercent={this.state.selectionStartPercent}
               updateSelectionStart={this.handleUpdateSelectionStart}
+              selectedAminoAcidIndex={this.state.selectedAminoAcidIndex}
               updateSelectedAminoAcidIndex={this.handleUpdateSelectedAminoAcidIndex}
               onClick={this.handleAminoAcidSliderClick}
               marks={this.state.marks}
@@ -134,6 +149,7 @@ class ProteinViewer extends Component {
             aminoAcids={aminoAcids}
             secondAminoAcids={aminoAcids2}
             selection={this.state.selectedAminoAcidIndex}
+            selectedAminoAcidXLocation={this.state.selectedAminoAcidXLocation}
             marks={this.state.marks}
             onMarkLocation={this.handleMark}
             width={274}
