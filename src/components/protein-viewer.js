@@ -23,15 +23,40 @@ class ProteinViewer extends Component {
     };
 
     this.handleUpdateSelectionStart = this.handleUpdateSelectionStart.bind(this);
+    this.handleAnimateToSelectionStart = this.handleAnimateToSelectionStart.bind(this);
     this.handleUpdateSelectedAminoAcidIndex = this.handleUpdateSelectedAminoAcidIndex.bind(this);
     this.handleAminoAcidSliderClick = this.handleAminoAcidSliderClick.bind(this);
     this.handleMark = this.handleMark.bind(this);
+    this.animate = this.animate.bind(this);
   }
 
   handleUpdateSelectionStart(selectionStartPercent) {
     this.setState({
+      animating: false,
       selectionStartPercent
     });
+  }
+
+  handleAnimateToSelectionStart(selectionStartPercentTarget) {
+    this.setState({
+      animating: true,
+      selectionStartPercentTarget
+    }, this.animate);
+  }
+
+  animate() {
+    const {selectionStartPercent, selectionStartPercentTarget, animating} = this.state;
+    if (!animating) return;
+    let speed;
+    if (selectionStartPercent > selectionStartPercentTarget) {
+      speed = Math.max(-0.02, selectionStartPercentTarget - selectionStartPercent);
+    } else {
+      speed = Math.min(0.02, selectionStartPercentTarget - selectionStartPercent);
+    }
+    this.setState({selectionStartPercent: selectionStartPercent + speed});
+    if (selectionStartPercentTarget - selectionStartPercent !== 0) {
+      window.requestAnimationFrame(this.animate);
+    }
   }
 
   handleUpdateSelectedAminoAcidIndex(selectedAminoAcidIndex, selectedAminoAcidXLocation, showInfo) {
@@ -110,6 +135,7 @@ class ProteinViewer extends Component {
           <Protein
             width={260}
             selectionStartPercent={this.state.selectionStartPercent}
+            updateSelectionStart={this.handleAnimateToSelectionStart}
             selectionPercent={protein1SelectionPercent}
             viewBox="0 0 222 206"
             svg={svgImage}
@@ -121,6 +147,7 @@ class ProteinViewer extends Component {
             <Protein
               width={260}
               selectionStartPercent={this.state.selectionStartPercent}
+              updateSelectionStart={this.handleAnimateToSelectionStart}
               selectionPercent={protein2SelectionPercent}
               viewBox="0 0 222 206"
               highlightColor="4, 255, 0"
