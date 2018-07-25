@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import ProteinWrapper from './node_modules/components/ProteinWrapper/ProteinWrapper';
 import registerServiceWorker from './registerServiceWorker';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(<ProteinWrapper />, document.getElementById('root'));
 registerServiceWorker();
