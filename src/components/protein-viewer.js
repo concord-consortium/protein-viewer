@@ -4,6 +4,8 @@ import AminoAcidSlider from './amino-acid-slider'
 import Protein from './protein'
 import InfoBox from './info-box';
 import getParameterByName from '../util/urlUtils';
+import { extractCodons } from '../util/dna-utils';
+import { getAminoAcidFromCodon, getAminoAcidsFromCodons } from '../util/amino-acid-utils';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import './protein-viewer.css';
@@ -18,7 +20,7 @@ class ProteinViewer extends Component {
       selectedAminoAcidIndex: 0,
       selectedAminoAcidXLocation: 0,
       showingInfoBox: false,
-      showingAlleles: !!getParameterByName('dnaVisible'),
+      showingDNA: !!getParameterByName('dnaVisible'),
       marks: []
     };
 
@@ -70,18 +72,32 @@ class ProteinViewer extends Component {
     });
   }
 
-  handleAllelesToggle = () => {
+  handleDNAToggle = () => {
     this.setState({
-      showingAlleles: !this.state.showingAlleles
+      showingDNA: !this.state.showingDNA
     });
   }
 
   render() {
-    const {selectionWidth, aminoAcids, aminoAcids2, aminoAcidWidth, width, svgImage, svgImage2, alleles, alleles2} = this.props;
+    const {selectionWidth, dna, dna2, aminoAcidWidth, width, svgImage, svgImage2} = this.props;
+
+    const codons = extractCodons(dna);
+    const aminoAcids = getAminoAcidsFromCodons(codons);
+
+    window.codons = codons;
+    window.aminoAcids = aminoAcids;
+
+    window.getAminoAcidsFromCodons = getAminoAcidsFromCodons;
+    window.getAminoAcidFromCodon = getAminoAcidFromCodon;
+
 
     const protein1SelectionPercent =  selectionWidth / (aminoAcids.length * aminoAcidWidth);
+    let codons2;
+    let aminoAcids2;
     let protein2SelectionPercent;
-    if (aminoAcids2) {
+    if (dna2) {
+      codons2 = extractCodons(dna2);
+      aminoAcids2 = getAminoAcidsFromCodons(codons2);
       protein2SelectionPercent = selectionWidth / (aminoAcids2.length * aminoAcidWidth);
     }
 
@@ -89,7 +105,7 @@ class ProteinViewer extends Component {
       <div className="protein-viewer">
         <div className="proteins">
           <Protein
-            width={width}
+            width={260}
             selectionStartPercent={this.state.selectionStartPercent}
             selectionPercent={protein1SelectionPercent}
             viewBox="0 0 222 206"
@@ -111,7 +127,7 @@ class ProteinViewer extends Component {
         <div className="amino-acids">
           <AminoAcidSlider
             aminoAcids={aminoAcids}
-            alleles={alleles}
+            codons={codons}
             width={width}
             aminoAcidWidth={aminoAcidWidth}
             selectionWidth={selectionWidth}
@@ -121,14 +137,14 @@ class ProteinViewer extends Component {
             updateSelectedAminoAcidIndex={this.handleUpdateSelectedAminoAcidIndex}
             onClick={this.handleAminoAcidSliderClick}
             marks={this.state.marks}
-            showAlleles={this.state.showingAlleles}
+            showDNA={this.state.showingDNA}
             dimUnselected={this.state.showingInfoBox}
           />
           {
             aminoAcids2 &&
             <AminoAcidSlider
               aminoAcids={aminoAcids2}
-              alleles={alleles2}
+              codons={codons2}
               width={width}
               aminoAcidWidth={aminoAcidWidth}
               selectionWidth={selectionWidth}
@@ -139,7 +155,7 @@ class ProteinViewer extends Component {
               onClick={this.handleAminoAcidSliderClick}
               marks={this.state.marks}
               dimUnselected={this.state.showingInfoBox}
-              showAlleles={this.state.showingAlleles}
+              showDNA={this.state.showingDNA}
               highlightColor="4, 255, 0"
             />
           }
@@ -152,32 +168,32 @@ class ProteinViewer extends Component {
             selectedAminoAcidXLocation={this.state.selectedAminoAcidXLocation}
             marks={this.state.marks}
             onMarkLocation={this.handleMark}
-            width={274}
+            width={width - 26}
           />
         }
-        {
-          getParameterByName('dnaSwitchable') &&
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={this.state.showingAlleles}
-                onChange={this.handleAllelesToggle}
-              />
-            }
-            label="Show DNA"
-          />
-        }
+        <div>
+          {
+            getParameterByName('dnaSwitchable') &&
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={this.state.showingDNA}
+                  onChange={this.handleDNAToggle}
+                />
+              }
+              label="Show DNA"
+            />
+          }
+        </div>
       </div>
     );
   }
 }
 
 ProteinViewer.propTypes = {
-  aminoAcids: PropTypes.string,
-  alleles: PropTypes.string,
+  dna: PropTypes.string,
   svgImage: PropTypes.string,
-  aminoAcids2: PropTypes.string,
-  alleles2: PropTypes.string,
+  dna2: PropTypes.string.isRequired,
   svgImage2: PropTypes.string,
   /** Width of the protein and slider elements, in pixels */
   width: PropTypes.number,
