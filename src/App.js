@@ -1,16 +1,35 @@
 import React, { Component } from 'react';
 import './App.css';
 import ProteinViewer from './components/protein-viewer';
-import { convertAminoAcidsToCodons } from './util/codon-utils';
 import getParameterByName from './util/urlUtils';
 
-const workingAminoAcids = "ARDEARCFCAEDEARCDEADRCDFEARCCCDEDEAFDEADRCDARCAEEACER"
-const brokenAminoAcids = "ARDEARCFCAEDEARCDEADRCDFEARCCCDEDEAFDECDRCDARCAEEACER"
+const workingDNA = `
+    5'-ATGCCCACCCAGGGGCCTCAGAAGAGGCTTCTGGGTTCTCTCAACTCCACCTCCACAGCCACCCCTCACCTTGGACTGGCCACAAACCAGACAGG
+    GCCTTGGTGCCTGCAGGTGTCTGTCCCGGATGGCCTCTTCCTCAGCCTGGGGCTGGTGAGTCTGGTGGAGAATGTGCTGGTCGTGATAGCTATCACCA
+    AAAACCGCAACCTGCACTCGCCCATGTATTCCTTCATCTGCTGTCTGGCCCTGTCTGACCTTTTGGTGAGTATAAGCTTGGTGCTGGAGACGGCTATC
+    ATCCTGCTGCTGGAGGCAGGGGCCCTGGTGACCCGGGCCGCTTTGGTGCAACAGCTGGACAATGTCATTGACGTGCTCATCTGTGGCTCCATGGTGTC
+    CAGTCTTTGCTTCCTTGGTGTCATTGCCATAGACCGCTACATCTCCATCTTCTATGCATTACGTTATCACAGCATTGTGACGCTGCCCCGGGCACGAC
+    GGGCCATCGTGGGCATCTGGGTGGCCAGCATCTTCTTCAGCACCCTCTTTATCACCTACTACAACCACACAGCCGTCCTAATCTGCCTTGTCACTTTC
+    TTTCTAGCCATGCTGGCCCTCATGGCAATTCTGTATGTCCACATGCTCACCCGAGCATACCAGCATGCTCAGGGGATTGCCCAGCTCCAGAAGAGGCA
+    GGGCTCCACCCGCCAAGGCTTCTGCCTTAAGGGTGCTGCCACCCTTACTATCATTCTGGGAATTTTCTTCCTGTGCTGGGGCCCCTTCTTCCTGCATC
+    TCACACTCATCGTCCTCTGCCCTCAGCACCCCACCTGCAGCTGCATCTTTAAGAACTTCAACCTCTACCTCGTTCTCATCATCTTCATTTTTATCGTC
+    GACCCCCTCATCTATGCTTTTCGGAGCCAGGAGCTCCGCATGACACTCAGGGAGGTGCTGCTGTGCTCCTGGTGA-3'`;
+
+const brokenDNA = `
+    5'-ATGCCCACCCAGGGGCCTCAGAAGAGGCTTCTGGGTTCTCTCAACTCCACCTCCACAGCCACCCCTCACCTTGGACTGGCCACAAACCAGACAGG
+    GCCTTGGTGCCTGCAGGTGTCTGTCCCGGATGGCCTCTTCCTCAGCCTGGGGCTGGTGAGTCTGGTGGAGAATGTGCTGGTCGTGATAGCCATCACCA
+    AAAACCGCAACCTGCACTCGCCCATGTATTCCTTCATCTGCTGTCTGGCCCTGTCTGACCTTTTGGTGAGTATAAGCTTGGTGCTGGAGACGGCTATC
+    ATCCTGCTGCTGGAGGCAGGGGCCCTGGTGACCCGGGCCGCTTTGGTGCAACAGCTGGACAATGTCATTGACGTGCTCATCTGTGGCTCCATGGTGTC
+    CAGTCTTTGCTTCCTTGGTGTCATTGCCATAGACCGCTACATCTCCATCTTCTATGCATTACGTTATCACAGCATTGTGACGCTGCCCCGGGCACGAC
+    GGGCCATCGTGGGCATCTGGGTGGCCAGCATCTTCTTCAGCACCCTCTTTATCACCTACTACAACCACACAGCCGTCCTAATCTGCCTTGTCACTTTC
+    TTTCTAGCCATGCTGGCCCTCATGGCAATTCTGTATGTCCACATGCTCACCCGAGCATACCAGCATGCTCAGGGGATTGCCCAGCTCCAGAAGAGGCA
+    GCGCTCCACCCGCCAAGGCTTCTGCCTTAAGGGTGCTGCCACCCTTACTATCATTCTGGGAATTTTCTTCCTGTGCTGGGGCCCCTTCTTCCTGCATC
+    TCACACTCATCGTCCTCTGCCCTCAGCACCCCACCTGCAGCTGCATCTTTAAGAACTTCAACCTCTACCTCGTTCTCATCATCTTCATTTTTATCGTC
+    GACCCCCTCATCTATGCTTTTCGGAGCCAGGAGCTCCGCATGACACTCAGGGAGGTGCTGCTGTGCTCCTGGTGA-3'`;
 
 const proteins = {
   working: {
-    aminoAcids: workingAminoAcids,
-    alleles: convertAminoAcidsToCodons(workingAminoAcids),
+    dna: workingDNA,
     svgImage: `
       <g id="receptor-bound">
         <path d="M13,21.006L13,29.006L35,43.006L56,29.006L58,13.006" style="fill:none;stroke:rgb(255,93,189);stroke-width:10px;"/>
@@ -23,8 +42,7 @@ const proteins = {
     `
   },
   broken: {
-    aminoAcids: brokenAminoAcids,
-    alleles: convertAminoAcidsToCodons(brokenAminoAcids),
+    dna: brokenDNA,
     svgImage: `
       <g id="receptor-broken">
         <path d="M13,21.006L13,29.006L35,43.006L56,29.006L58,13.006" style="fill:none;stroke:rgb(255,93,189);stroke-width:10px;"/>
@@ -47,10 +65,21 @@ class App extends Component {
       display = ["working", "broken"]
     }
 
+    const showDNA = getParameterByName('dnaVisible');
+    const dnaSwitchable = getParameterByName('dnaSwitchable');
+
     this.state = {
       demo,
-      display
+      display,
+      showDNA,
+      dnaSwitchable
     };
+  }
+
+  toggleShowDNA = () => {
+    this.setState({
+      showDNA: !this.state.showDNA
+    });
   }
 
   render() {
@@ -62,12 +91,13 @@ class App extends Component {
         { (visibleProteins.length === 2) &&
           <div className="example">
             <ProteinViewer
-              aminoAcids={visibleProteins[0].aminoAcids}
+              dna={visibleProteins[0].dna}
               svgImage={visibleProteins[0].svgImage}
-              alleles={visibleProteins[0].alleles}
-              aminoAcids2={visibleProteins[1].aminoAcids}
+              dna2={visibleProteins[1].dna}
               svgImage2={visibleProteins[1].svgImage}
-              alleles2={visibleProteins[1].alleles}
+              showDNA={this.state.showDNA}
+              dnaSwitchable={this.state.dnaSwitchable}
+              toggleShowDNA={this.toggleShowDNA}
             />
           </div>
         }
@@ -76,9 +106,11 @@ class App extends Component {
         { (visibleProteins.length === 1 || this.state.demo) &&
           <div className="example">
             <ProteinViewer
-              aminoAcids={visibleProteins[0].aminoAcids}
-              alleles={visibleProteins[0].alleles}
+              dna={visibleProteins[0].dna}
               svgImage={visibleProteins[0].svgImage}
+              showDNA={this.state.showDNA}
+              dnaSwitchable={this.state.dnaSwitchable}
+              toggleShowDNA={this.toggleShowDNA}
             />
           </div>
         }
