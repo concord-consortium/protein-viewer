@@ -1,107 +1,41 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { getAminoAcidColor } from '../util/amino-acid-utils';
 
-/**
- * Takes an svg path def and scales it and offsets it by x and y
- * @example scalePath("M1,2L3,4Z", 2, 0, 1);  // returns "M2,5L6,9Z"
- * @param {string} d svg path def
- * @param {float} scale
- */
-const scalePath = (d, scale, x=0, y=0) => {
-  // goes from "Ma,blc,dZ" to [[a',b'],[c',d']] where a' is (a * scale)
-  let points = d.substr(1, d.length-2).split("L").map(xy => xy.split(",").map(n => parseFloat(n) * scale))
-  // offsets each point by x and y
-  points = points.map(xy => xy.map((p, i) => i === 0 ? p + x : p + y));
-  return `M${points.map(xy => xy.join()).join("L")}Z`;
+// dimensions of the viewBox the original images
+const originalWidth = 100;
+
+const aminoAcidElements = {
+  A: <rect x="15.88" y="30" width="68.23" height="40" rx="3" ry="3" style={{fill: getAminoAcidColor('A')}}/>,
+  C: <ellipse cx="50" cy="50" rx="38.82" ry="21.76" style={{fill: getAminoAcidColor('C')}}/>,
+  D: <path d="M11.58,52.69,71,82.14a3,3,0,0,0,4.33-2.69V20.55A3,3,0,0,0,71,17.86L11.58,47.31A3,3,0,0,0,11.58,52.69Z" style={{fill: getAminoAcidColor('D')}}/>,
+  E: <path d="M50,17.83a3.14,3.14,0,0,1,3.47-3.11,35.47,35.47,0,0,1,0,70.56A3.14,3.14,0,0,1,50,82.17Z" style={{fill: getAminoAcidColor('E')}}/>,
+  F: <circle cx="50" cy="50" r="33.53" style={{fill: getAminoAcidColor('F')}}/>,
+  G: <path d="M17.83,50a3.14,3.14,0,0,1-3.11-3.47,35.47,35.47,0,0,1,70.56,0A3.14,3.14,0,0,1,82.17,50Z" style={{fill: getAminoAcidColor('G')}}/>,
+  H: <path d="M50,82.17a3.14,3.14,0,0,1-3.47,3.11,35.47,35.47,0,0,1,0-70.56A3.14,3.14,0,0,1,50,17.83Z" style={{fill: getAminoAcidColor('H')}}/>,
+  I: <path d="M75.47,79.83l.27-46.95A3,3,0,0,0,73.55,30L28.34,17.3a3,3,0,0,0-3.81,2.87l-.27,47A3,3,0,0,0,26.45,70L71.66,82.7A3,3,0,0,0,75.47,79.83Z" style={{fill: getAminoAcidColor('I')}}/>,
+  K: <path d="M88.42,47.31,29,17.86a3,3,0,0,0-4.33,2.69v58.9A3,3,0,0,0,29,82.14l59.4-29.45A3,3,0,0,0,88.42,47.31Z" style={{fill: getAminoAcidColor('K')}}/>,
+  L: <ellipse cx="50" cy="50" rx="21.76" ry="38.82" style={{fill: getAminoAcidColor('L')}}/>,
+  M: <path d="M47.31,11.58,17.86,71a3,3,0,0,0,2.69,4.33h58.9A3,3,0,0,0,82.14,71L52.69,11.58A3,3,0,0,0,47.31,11.58Z" style={{fill: getAminoAcidColor('M')}}/>,
+  N: <path d="M52.69,88.42,82.14,29a3,3,0,0,0-2.69-4.33H20.55A3,3,0,0,0,17.86,29l29.45,59.4A3,3,0,0,0,52.69,88.42Z" style={{fill: getAminoAcidColor('N')}}/>,
+  P: <path d="M85.29,50A35.29,35.29,0,1,1,50,14.71,35.29,35.29,0,0,1,85.29,50ZM50,33.55A16.45,16.45,0,1,0,66.45,50,16.44,16.44,0,0,0,50,33.55Z" style={{fill: getAminoAcidColor('P')}}/>,
+  Q: <path d="M23.81,79.83l-.27-46.95A3,3,0,0,1,25.73,30L70.93,17.3a3,3,0,0,1,3.81,2.87l.27,47A3,3,0,0,1,72.82,70L27.62,82.7A3,3,0,0,1,23.81,79.83Z" style={{fill: getAminoAcidColor('Q')}}/>,
+  R: <rect x="30" y="15.88" width="40" height="68.23" rx="3" ry="3" style={{fill: getAminoAcidColor('R')}}/>,
+  S: <path d="M82.17,50a3.14,3.14,0,0,1,3.11,3.47,35.47,35.47,0,0,1-70.56,0A3.14,3.14,0,0,1,17.83,50Z" style={{fill: getAminoAcidColor('S')}}/>,
+  T: <rect x="21.76" y="21.76" width="56.47" height="56.47" rx="3" ry="3" style={{fill: getAminoAcidColor('T')}}/>,
+  V: <path d="M52.39,89.15,80.86,51.82a3,3,0,0,0,0-3.64L52.39,10.85a3,3,0,0,0-4.78,0L19.14,48.18a3,3,0,0,0,0,3.64L47.61,89.15A3,3,0,0,0,52.39,89.15Z" style={{fill: getAminoAcidColor('V')}}/>,
+  W: <path d="M48.1,13.21l-30.59,25a3,3,0,0,0-1,3.07l8.87,34.4A3,3,0,0,0,28.28,78H71.72a3,3,0,0,0,2.9-2.25l8.87-34.4a3,3,0,0,0-1-3.07l-30.59-25A3,3,0,0,0,48.1,13.21Z" style={{fill: getAminoAcidColor('W')}}/>,
+  Y: <path d="M48.5,14.19,19.74,30.79a3,3,0,0,0-1.5,2.6V66.61a3,3,0,0,0,1.5,2.6L48.5,85.81a3,3,0,0,0,3,0l28.76-16.6a3,3,0,0,0,1.5-2.6V33.39a3,3,0,0,0-1.5-2.6L51.5,14.19A3,3,0,0,0,48.5,14.19Z" style={{fill: getAminoAcidColor('Y')}}/>
 }
 
-const simpleCircle = ({width, x, y, strokeWidth, stroke, fill, scale, opacity}) => {
-  const scaledStrokeWidth = strokeWidth * scale;
-  const r = (width/2) - (scaledStrokeWidth/2);
-  return (
-    <circle
-      style={{
-        stroke,
-        strokeWidth: `${scaledStrokeWidth}px`,
-        fill
-      }}
-      cx={x + r + scaledStrokeWidth/2}
-      cy={y + r + scaledStrokeWidth/2}
-      r={r}
-      opacity={opacity}
-    />
-  );
-}
-
-const closedPath = ({d, x, y, strokeWidth, stroke, fill, scale, opacity}) => {
-  const scaledD = scalePath(d, scale, x, y);
-  const scaledStrokeWidth = strokeWidth * scale;
-  return (
-    <path
-      d={scaledD}
-      style={{
-        fill,
-        fillRule: 'nonzero',
-        stroke,
-        strokeWidth: `${scaledStrokeWidth}px`,
-        opacity
-      }}
-    />
-  );
-}
-
-const aminoAcids = {
-  A: ({width, x, y, dimmed}) => simpleCircle({
-    width: width * 0.95,
-    x, y,
-    strokeWidth: 7,
-    stroke: 'rgb(191, 233, 51)',
-    fill: 'rgb(244, 255, 141)',
-    scale: width/50,
-    opacity: dimmed ? .3 : 1}),
-  R: ({width, x, y, dimmed}) => simpleCircle({
-    width: width * 0.95,
-    x, y,
-    strokeWidth: 12,
-    stroke: 'rgb(233, 51, 179)',
-    fill: 'rgb(244, 255, 141)',
-    scale: width/50,
-    opacity: dimmed ? .3 : 1}),
-  C: ({width, x, y, dimmed}) => closedPath({
-    d: "M16.023,3.044L42.018,7.799L46.662,34.567L23.535,46.357L4.6,26.875L16.023,3.044Z",
-    x, y,
-    strokeWidth: 5,
-    stroke: 'rgb(89,85,218)',
-    fill: 'rgb(0,10,210)',
-    scale: width/50,
-    opacity: dimmed ? .3 : 1}),
-  D: ({width, x, y, dimmed}) => closedPath({
-    d: "M16.037,7.079L32.135,6.876L42.588,19.531L39.525,35.515L25.252,42.791L10.517,35.88L6.416,19.987L16.037,7.079Z",
-    x, y,
-    strokeWidth: 13,
-    stroke: 'rgb(218,85,100)',
-    fill: 'rgb(0,10,210)',
-    scale: width/50,
-    opacity: dimmed ? .3 : 1}),
-  E: ({width, x, y, dimmed}) => closedPath({
-    d: "M44.762,21.261L36.047,43.526L11.472,43.025L4.997,20.449L25.572,6.999L44.762,21.261Z",
-    x, y,
-    strokeWidth: 5,
-    stroke: 'rgb(239,111,0)',
-    fill: 'rgb(8,120,138)',
-    scale: width/50,
-    opacity: dimmed ? .3 : 1}),
-  F: ({width, x, y, dimmed}) => closedPath({
-    d: "M45.83,25.538L29.875,29.897L28.706,45.665L19.338,32.556L3.206,36.291L13.371,23.83L4.57,10.371L20.221,15.779L30.913,3.725L30.421,19.529L45.83,25.538Z",
-    x, y,
-    strokeWidth: 5,
-    stroke: 'rgb(186,186,186)',
-    fill: 'rgb(210,119,253)',
-    scale: width/50,
-    opacity: dimmed ? .3 : 1}),
-}
-
-const AminoAcid = ({type="A", width=18, x=0, y=0, dimmed=false}) => aminoAcids[type]({width, x, y, dimmed});
+const AminoAcid = ({type="A", width=18, x=0, y=0, dimmed=false}) => (
+  <g style={{opacity: dimmed ? 0.4 : 1}} transform={`scale(${width/originalWidth}) translate(${x/(width/originalWidth)}, ${y/(width/originalWidth)})`}>
+    <circle id="AA back" data-name="AA back" cx={originalWidth/2} cy={originalWidth/2} r={originalWidth/2} style={{fill: "rgb(135, 146, 157)"}}></circle>
+    <g id="AA shape">
+      { aminoAcidElements[type] }
+    </g>
+  </g>
+)
 
 AminoAcid.propTypes = {
   type: PropTypes.string,
