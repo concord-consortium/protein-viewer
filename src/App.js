@@ -65,10 +65,21 @@ class App extends Component {
       display = ["working", "broken"]
     }
 
+    const showDNA = getParameterByName('dnaVisible');
+    const dnaSwitchable = getParameterByName('dnaSwitchable');
+
     this.state = {
       demo,
-      display
+      display,
+      showDNA,
+      dnaSwitchable
     };
+  }
+
+  toggleShowDNA = () => {
+    this.setState({
+      showDNA: !this.state.showDNA
+    });
   }
 
   render() {
@@ -84,6 +95,9 @@ class App extends Component {
               svgImage={visibleProteins[0].svgImage}
               dna2={visibleProteins[1].dna}
               svgImage2={visibleProteins[1].svgImage}
+              showDNA={this.state.showDNA}
+              dnaSwitchable={this.state.dnaSwitchable}
+              toggleShowDNA={this.toggleShowDNA}
             />
           </div>
         }
@@ -94,6 +108,9 @@ class App extends Component {
             <ProteinViewer
               dna={visibleProteins[0].dna}
               svgImage={visibleProteins[0].svgImage}
+              showDNA={this.state.showDNA}
+              dnaSwitchable={this.state.dnaSwitchable}
+              toggleShowDNA={this.toggleShowDNA}
             />
           </div>
         }
