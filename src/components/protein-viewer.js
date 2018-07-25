@@ -74,8 +74,15 @@ class ProteinViewer extends Component {
     this.props.toggleShowDNA();
   }
 
+  handleAminoAcidsToggle = () => {
+    this.props.toggleShowingAminoAcidsOnProtein();
+  }
+
   render() {
-    const {selectionWidth, dna, dna2, aminoAcidWidth, width, svgImage, svgImage2, showDNA, dnaSwitchable} = this.props;
+    const {
+      selectionWidth, dna, dna2, aminoAcidWidth, width,
+      svgImage, svgImage2, showDNA, showAminoAcidsOnProtein, dnaSwitchable
+    } = this.props;
 
     const codons = extractCodons(dna);
     const aminoAcids = getAminoAcidsFromCodons(codons);
@@ -107,6 +114,8 @@ class ProteinViewer extends Component {
             viewBox="0 0 222 206"
             svg={svgImage}
             marks={this.state.marks.map(loc => (loc + 0.5) / aminoAcids.length)}
+            aminoAcids={aminoAcids}
+            showAminoAcids={showAminoAcidsOnProtein}
           />
           { svgImage2 &&
             <Protein
@@ -117,6 +126,8 @@ class ProteinViewer extends Component {
               highlightColor="4, 255, 0"
               svg={svgImage2}
               marks={this.state.marks.map(loc => (loc + 0.5) / aminoAcids2.length)}
+              aminoAcids={aminoAcids}
+              showAminoAcids={showAminoAcidsOnProtein}
             />
           }
         </div>
@@ -180,6 +191,15 @@ class ProteinViewer extends Component {
               label="Show DNA"
             />
           }
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={showAminoAcidsOnProtein}
+                onChange={this.handleAminoAcidsToggle}
+              />
+            }
+            label="Show Amino Acids on Protein"
+          />
         </div>
       </div>
     );
@@ -203,9 +223,12 @@ ProteinViewer.propTypes = {
   selectionWidth: PropTypes.number,
   /** Whether DNA is initially visible */
   showDNA: PropTypes.bool,
+  /** Whether "string of beads" amino acids are visible */
+  showAminoAcidsOnProtein: PropTypes.bool,
   /** Whether user can toggle DNA */
   dnaSwitchable: PropTypes.bool,
-  toggleShowDNA: PropTypes.func
+  toggleShowDNA: PropTypes.func,
+  toggleShowingAminoAcidsOnProtein: PropTypes.func
 };
 
 ProteinViewer.defaultProps = {
@@ -214,6 +237,7 @@ ProteinViewer.defaultProps = {
   aminoAcidWidth: 17,
   codonWidth: 29,
   showDNA: false,
+  showAminoAcidsOnProtein: false,
   dnaSwitchable: true
 };
 

@@ -72,8 +72,15 @@ class App extends Component {
       demo,
       display,
       showDNA,
-      dnaSwitchable
+      dnaSwitchable,
+      showAminoAcidsOnViewer: false
     };
+  }
+
+  toggleShowingAminoAcidsOnViewer = () => {
+    this.setState({
+      showAminoAcidsOnViewer: !this.state.showAminoAcidsOnViewer
+    });
   }
 
   toggleShowDNA = () => {
@@ -96,8 +103,10 @@ class App extends Component {
               dna2={visibleProteins[1].dna}
               svgImage2={visibleProteins[1].svgImage}
               showDNA={this.state.showDNA}
+              showAminoAcidsOnProtein={this.state.showAminoAcidsOnViewer}
               dnaSwitchable={this.state.dnaSwitchable}
               toggleShowDNA={this.toggleShowDNA}
+              toggleShowingAminoAcidsOnProtein={this.toggleShowingAminoAcidsOnViewer}
             />
           </div>
         }
@@ -109,8 +118,10 @@ class App extends Component {
               dna={visibleProteins[0].dna}
               svgImage={visibleProteins[0].svgImage}
               showDNA={this.state.showDNA}
+              showAminoAcidsOnProtein={this.state.showAminoAcidsOnViewer}
               dnaSwitchable={this.state.dnaSwitchable}
               toggleShowDNA={this.toggleShowDNA}
+              toggleShowingAminoAcidsOnProtein={this.toggleShowingAminoAcidsOnViewer}
             />
           </div>
         }
