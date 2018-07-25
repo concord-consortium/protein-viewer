@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import AminoAcidSlider from './amino-acid-slider'
 import Protein from './protein'
 import InfoBox from './info-box';
-import getParameterByName from '../util/urlUtils';
 import { extractCodons } from '../util/dna-utils';
 import { getAminoAcidFromCodon, getAminoAcidsFromCodons } from '../util/amino-acid-utils';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -20,7 +19,6 @@ class ProteinViewer extends Component {
       selectedAminoAcidIndex: 0,
       selectedAminoAcidXLocation: 0,
       showingInfoBox: false,
-      showingDNA: !!getParameterByName('dnaVisible'),
       marks: []
     };
 
@@ -73,13 +71,11 @@ class ProteinViewer extends Component {
   }
 
   handleDNAToggle = () => {
-    this.setState({
-      showingDNA: !this.state.showingDNA
-    });
+    this.props.toggleShowDNA();
   }
 
   render() {
-    const {selectionWidth, dna, dna2, aminoAcidWidth, width, svgImage, svgImage2} = this.props;
+    const {selectionWidth, dna, dna2, aminoAcidWidth, width, svgImage, svgImage2, showDNA, dnaSwitchable} = this.props;
 
     const codons = extractCodons(dna);
     const aminoAcids = getAminoAcidsFromCodons(codons);
@@ -114,7 +110,7 @@ class ProteinViewer extends Component {
           />
           { svgImage2 &&
             <Protein
-              width={width}
+              width={260}
               selectionStartPercent={this.state.selectionStartPercent}
               selectionPercent={protein2SelectionPercent}
               viewBox="0 0 222 206"
@@ -137,7 +133,7 @@ class ProteinViewer extends Component {
             updateSelectedAminoAcidIndex={this.handleUpdateSelectedAminoAcidIndex}
             onClick={this.handleAminoAcidSliderClick}
             marks={this.state.marks}
-            showDNA={this.state.showingDNA}
+            showDNA={showDNA}
             dimUnselected={this.state.showingInfoBox}
           />
           {
@@ -155,7 +151,7 @@ class ProteinViewer extends Component {
               onClick={this.handleAminoAcidSliderClick}
               marks={this.state.marks}
               dimUnselected={this.state.showingInfoBox}
-              showDNA={this.state.showingDNA}
+              showDNA={showDNA}
               highlightColor="4, 255, 0"
             />
           }
@@ -173,11 +169,11 @@ class ProteinViewer extends Component {
         }
         <div>
           {
-            getParameterByName('dnaSwitchable') &&
+            dnaSwitchable &&
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={this.state.showingDNA}
+                  checked={showDNA}
                   onChange={this.handleDNAToggle}
                 />
               }
@@ -204,14 +200,21 @@ ProteinViewer.propTypes = {
   /** Width of the selection box, in pixels. Note this, the `aminoAcidWidth` prop,
    * and the length of the amino acid chain will together combine to affect the
    * percent of protein selected. */
-  selectionWidth: PropTypes.number
+  selectionWidth: PropTypes.number,
+  /** Whether DNA is initially visible */
+  showDNA: PropTypes.bool,
+  /** Whether user can toggle DNA */
+  dnaSwitchable: PropTypes.bool,
+  toggleShowDNA: PropTypes.func
 };
 
 ProteinViewer.defaultProps = {
-  width: 300,
-  selectionWidth: 70,
+  width: 600,
+  selectionWidth: 220,
   aminoAcidWidth: 17,
-  codonWidth: 29
+  codonWidth: 29,
+  showDNA: false,
+  dnaSwitchable: true
 };
 
 
