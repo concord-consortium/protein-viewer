@@ -22,7 +22,7 @@ class AminoAcidSlider extends Component {
 
     this.wrapperRef = React.createRef();
     this.selectionRef = React.createRef();
-    this.alleleStringRef = React.createRef();
+    this.dnaStringRef = React.createRef();
 
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseMove = this.onMouseMove.bind(this);
@@ -102,7 +102,7 @@ class AminoAcidSlider extends Component {
 
   /** distance between amino acids */
   get aminoAcidSpacing() {
-    if (this.props.showAlleles) {
+    if (this.props.showDNA) {
       return this.props.codonWidth + codonMargin;
     } else {
       return this.props.aminoAcidWidth + aminoAcidMargin;
@@ -116,7 +116,7 @@ class AminoAcidSlider extends Component {
 
   /** width of selection box in pixels, which depends on whether DNA is visible */
   get actualSelectionWidth() {
-    if (this.props.showAlleles) {
+    if (this.props.showDNA) {
       const noDNAChainLength = this.props.aminoAcids.length * (this.props.aminoAcidWidth + aminoAcidMargin) + (chainMargin * 2);
       return this.props.selectionWidth * (this.aminoAcidChainLength / noDNAChainLength);
     } else {
@@ -166,14 +166,14 @@ class AminoAcidSlider extends Component {
   render() {
     const {
       aminoAcids,
-      alleles,
+      codons,
       selectedAminoAcidIndex,
       width,
       aminoAcidWidth,
       dnaFontHeight,
       highlightColor,
       marks,
-      showAlleles,
+      showDNA,
       dimUnselected
     } = this.props;
 
@@ -226,24 +226,24 @@ class AminoAcidSlider extends Component {
             <rect x={x + innerAminoAcidOffset - 1} y={1} width={aminoAcidWidth + 1} height={aminoAcidWidth + 2} style={{fill: "#33F", stroke: "#AAF", opacity: (dimmed ? 0.4 : 1), strokeWidth: 2}} />
           }
           {
-            a !== "0" &&
+            a !== "0" && a !== "1" &&
             <AminoAcid type={a} x={x + innerAminoAcidOffset} y={2.5} width={aminoAcidWidth} dimmed={dimmed} />
           }
           {
-            showAlleles &&
-            <Codon dna={alleles.substring(i * 3, (i + 1) * 3)} x={x} y={aminoAcidWidth + acidMargin + dnaFontHeight} fontSize={dnaFontHeight} dimmed={dimmed} />
+            showDNA &&
+            <Codon dna={codons[i]} x={x} y={aminoAcidWidth + acidMargin + dnaFontHeight} fontSize={dnaFontHeight} dimmed={dimmed} />
           }
         </g>
       )
     })
 
     let svgHeight = aminoAcidWidth + acidMargin + 2;
-    if (showAlleles) {
+    if (showDNA) {
       svgHeight += dnaFontHeight;
     }
 
-    const chainLineStart = Math.max(0, this.getXLocationOfAminoAcid(0) + innerAminoAcidOffset);
-    const chainLineEnd = Math.min(width, this.getXLocationOfAminoAcid(aminoAcids.length-1) + innerAminoAcidOffset);
+    const chainLineStart = Math.max(0, this.getXLocationOfAminoAcid(0) + innerAminoAcidOffset + aminoAcidWidth/2);
+    const chainLineEnd = Math.min(width, this.getXLocationOfAminoAcid(aminoAcids.length-2) + innerAminoAcidOffset + aminoAcidWidth/2);
 
     return (
       <div className={wrapperClass} style={frameStyle} ref={this.wrapperRef}
@@ -254,7 +254,7 @@ class AminoAcidSlider extends Component {
           style={selectStyle}
           ref={this.selectionRef}
         />
-        <div className="amino-acids" ref={this.alleleStringRef}>
+        <div className="amino-acids" ref={this.dnaStringRef}>
           <svg width={width} height={svgHeight} viewBox={`0 0 ${width} ${svgHeight}`}>
             <path d={`M${chainLineStart},${(aminoAcidWidth/2)+3}L${chainLineEnd},${(aminoAcidWidth/2)+3}`} style={{stroke: '#AAA', strokeWidth: '2px', opacity: (dimUnselected ? 0.4 : 1)}} />
             { aminoAcidImages }
@@ -267,7 +267,7 @@ class AminoAcidSlider extends Component {
 
 AminoAcidSlider.propTypes = {
   aminoAcids: PropTypes.string,
-  alleles: PropTypes.string,
+  codons: PropTypes.array,
   width: PropTypes.number,
   aminoAcidWidth: PropTypes.number,
   codonWidth: PropTypes.number,
@@ -276,7 +276,7 @@ AminoAcidSlider.propTypes = {
   selectedAminoAcidIndex: PropTypes.number,
   highlightColor: PropTypes.string,
   marks: PropTypes.array,
-  showAlleles: PropTypes.bool,
+  showDNA: PropTypes.bool,
   dimUnselected: PropTypes.bool,
   updateSelectionStart: PropTypes.func,
   updateSelectedAminoAcidIndex: PropTypes.func,
@@ -285,13 +285,13 @@ AminoAcidSlider.propTypes = {
 
 AminoAcidSlider.defaultProps = {
   aminoAcids: "",
-  alleles: "",
+  codons: [],
   width: 300,
   selectionWidth: 70,
   selectionStart: 0,
   aminoAcidWidth: 17,
   codonWidth: 29,
-  showAlleles: false,
+  showDNA: false,
   marks: [],
   dnaFontHeight: 16
 };
