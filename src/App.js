@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import ProteinViewer from './components/protein-viewer';
+import ProteinBuilder from './components/protein-builder';
 import getParameterByName from './util/urlUtils';
 
 const workingDNA = `
@@ -67,13 +68,29 @@ class App extends Component {
 
     const showDNA = getParameterByName('dnaVisible');
     const dnaSwitchable = getParameterByName('dnaSwitchable');
+    const showBuilder = getParameterByName("showBuilder");
 
     this.state = {
       demo,
       display,
       showDNA,
-      dnaSwitchable
+      dnaSwitchable,
+      showBuilder,
+      showAminoAcidsOnViewer: false,
+      showAminoAcidsOnBuilder: false
     };
+  }
+
+  toggleShowingAminoAcidsOnViewer = () => {
+    this.setState({
+      showAminoAcidsOnViewer: !this.state.showAminoAcidsOnViewer
+    });
+  }
+
+  toggleShowingAminoAcidsOnBuilder = () => {
+    this.setState({
+      showAminoAcidsOnBuilder: !this.state.showAminoAcidsOnBuilder
+    });
   }
 
   toggleShowDNA = () => {
@@ -96,8 +113,10 @@ class App extends Component {
               dna2={visibleProteins[1].dna}
               svgImage2={visibleProteins[1].svgImage}
               showDNA={this.state.showDNA}
+              showAminoAcidsOnProtein={this.state.showAminoAcidsOnViewer}
               dnaSwitchable={this.state.dnaSwitchable}
               toggleShowDNA={this.toggleShowDNA}
+              toggleShowingAminoAcidsOnProtein={this.toggleShowingAminoAcidsOnViewer}
             />
           </div>
         }
@@ -109,8 +128,23 @@ class App extends Component {
               dna={visibleProteins[0].dna}
               svgImage={visibleProteins[0].svgImage}
               showDNA={this.state.showDNA}
+              showAminoAcidsOnProtein={this.state.showAminoAcidsOnViewer}
               dnaSwitchable={this.state.dnaSwitchable}
               toggleShowDNA={this.toggleShowDNA}
+              toggleShowingAminoAcidsOnProtein={this.toggleShowingAminoAcidsOnViewer}
+            />
+          </div>
+        }
+
+        { (this.state.showBuilder || this.state.demo) &&
+          <div className="example">
+            <ProteinBuilder
+              dna={visibleProteins[0].dna}
+              svgImage={visibleProteins[0].svgImage}
+              speed={0.001}
+              sliderWidth={500}
+              showAminoAcids={this.state.showAminoAcidsOnBuilder}
+              handleAminoAcidsToggle={this.toggleShowingAminoAcidsOnBuilder}
             />
           </div>
         }

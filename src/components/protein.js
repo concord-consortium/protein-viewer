@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { svgPathProperties } from 'svg-path-properties';
-import parseSVG from '../util/parse-svg';
+import parseSVG, { closestPointOnPath } from '../util/svg-utils';
+import { getAminoAcidColor } from '../util/amino-acid-utils';
 import './protein.css';
 
 const Protein = (props) => {
@@ -32,12 +33,43 @@ const Protein = (props) => {
     return <path key={loc} d={d} style={{stroke: "#33F", strokeWidth: 3}} />
   });
 
+  let dots;
+  if (props.showAminoAcids) {
+    dots = props.aminoAcids.split('').map((aa, i) => {
+      if (aa === "0") return null;
+      const color = getAminoAcidColor(aa);
+      const dist = i/props.aminoAcids.length * highlightPathTotalLength;
+      const point = highlightProps.getPointAtLength(dist);
+
+      return <circle key={i} cx={point.x} cy={point.y} r={2} style={{fill: color, stroke: "#222", strokeWidth: 0.5}} />
+    });
+  }
+
+  let svgEl = null;
+
+  const onClick = (evt) => {
+    const pt = svgEl.createSVGPoint();
+    pt.x = evt.clientX;
+    pt.y = evt.clientY;
+    const svgPt = pt.matrixTransform(svgEl.getScreenCTM().inverse())
+    const closestPoint = closestPointOnPath(svgPt, highlightProps);
+    if (closestPoint.distance > 20) {
+      // too far
+      return;
+    }
+    let perc = closestPoint.length / highlightPathTotalLength;
+    perc = perc - (props.selectionPercent / 2);
+    perc = Math.max(0, Math.min(perc, 1 - props.selectionPercent));
+    props.updateSelectionStart(perc);
+  }
+
   return (
     <div className="protein">
-      <svg viewBox={props.viewBox} width={props.width}>
+      <svg ref={(el) => { svgEl = el; }} viewBox={props.viewBox} width={props.width} height={props.width} onClick={onClick}>
         <g dangerouslySetInnerHTML={{__html: props.svg}} />
         <g dangerouslySetInnerHTML={{__html: highlight}} />
         { marks }
+        { dots }
       </svg>
     </div>
   );
@@ -50,7 +82,10 @@ Protein.propTypes = {
   selectionStartPercent: PropTypes.number,
   selectionPercent: PropTypes.number,
   highlightColor: PropTypes.string,
-  marks: PropTypes.array
+  marks: PropTypes.array,
+  aminoAcids: PropTypes.string,
+  showAminoAcids: PropTypes.bool,
+  updateSelectionStart: PropTypes.func
 };
 
 Protein.defaultProps = {
