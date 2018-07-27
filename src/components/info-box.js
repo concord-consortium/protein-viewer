@@ -29,22 +29,23 @@ class InfoBox extends Component {
   }
 
   render() {
-    const location = Math.floor((this.props.aminoAcids.length - 1) * this.props.selection);
-    const aminoAcid = this.props.aminoAcids.charAt(location) || "e";
+    const {selection, aminoAcids, secondAminoAcids, width, marks} = this.props;
+
+    const aminoAcid = aminoAcids.charAt(selection);
 
     let secondAminoAcid;
-    if (this.props.secondAminoAcids) {
-      secondAminoAcid = this.props.secondAminoAcids.charAt(location) || "e";
+    if (secondAminoAcids) {
+      secondAminoAcid = secondAminoAcids.charAt(selection);
       if (secondAminoAcid === aminoAcid) {
         secondAminoAcid = null;
       }
     }
 
     const style = {
-      marginLeft: (this.props.selection * this.props.width) - (this.props.width/2),
+      marginLeft: this.props.selectedAminoAcidXLocation - (width/2),
     }
 
-    const marked = this.props.marks.indexOf(location) > -1;
+    const marked = marks.includes(selection);
 
     return (
       <div className="info-box-wrapper">
@@ -60,7 +61,7 @@ class InfoBox extends Component {
                 type="checkbox"
                 checked={marked}
                 onChange={() => {
-                  this.props.onMarkLocation && this.props.onMarkLocation(location)
+                  this.props.onMarkLocation && this.props.onMarkLocation(selection)
                 }} />
                 Mark this location
             </label>
@@ -77,6 +78,7 @@ InfoBox.propTypes = {
   aminoAcids: PropTypes.string,
   secondAminoAcids: PropTypes.string,
   selection: PropTypes.number,
+  selectedAminoAcidXLocation: PropTypes.number,
   marks: PropTypes.array,
   onMarkLocation: PropTypes.func
 };
