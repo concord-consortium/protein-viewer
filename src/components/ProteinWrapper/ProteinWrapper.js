@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import './ProteinWrapper.css';
 import ProteinViewer from '../protein-viewer';
 import ProteinBuilder from '../protein-builder';
-import getParameterByName from '../../util/urlUtils';
 
 const workingDNA = `
     5'-ATGCCCACCCAGGGGCCTCAGAAGAGGCTTCTGGGTTCTCTCAACTCCACCTCCACAGCCACCCCTCACCTTGGACTGGCCACAAACCAGACAGG
@@ -58,27 +57,24 @@ class ProteinWrapper extends Component {
   constructor(props) {
     super(props);
 
-    let display = getParameterByName("proteins") || "";
-    const demo = !display;
-    if (!demo) {
-      display = display.split(",");
-    } else {
-      display = ["working", "broken"]
-    }
-
-    const showDNA = getParameterByName('dnaVisible');
-    const dnaSwitchable = getParameterByName('dnaSwitchable');
-    const showBuilder = getParameterByName("showBuilder");
-
     this.state = {
-      demo,
-      display,
-      showDNA,
-      dnaSwitchable,
-      showBuilder,
+      showDNA: props.showDNA,
       showAminoAcidsOnViewer: false,
       showAminoAcidsOnBuilder: false
     };
+  }
+
+  getDisplayedProteins = () => {
+    const { display } = this.props
+    if (display) {
+      return display.split(",")
+    } else {
+      return ["working", "broken"]
+    }
+  }
+
+  isDemo = () => {
+    return !this.props.display
   }
 
   toggleShowingAminoAcidsOnViewer = () => {
@@ -100,7 +96,8 @@ class ProteinWrapper extends Component {
   }
 
   render() {
-    const visibleProteins = this.state.display.map(d => proteins[d]);
+    const visibleProteins = this.getDisplayedProteins().map(d => proteins[d]);
+    const { dnaSwitchable, showBuilder } = this.props
 
     return (
       <div className="App">
@@ -114,29 +111,28 @@ class ProteinWrapper extends Component {
               svgImage2={visibleProteins[1].svgImage}
               showDNA={this.state.showDNA}
               showAminoAcidsOnProtein={this.state.showAminoAcidsOnViewer}
-              dnaSwitchable={this.state.dnaSwitchable}
+              dnaSwitchable={dnaSwitchable}
               toggleShowDNA={this.toggleShowDNA}
               toggleShowingAminoAcidsOnProtein={this.toggleShowingAminoAcidsOnViewer}
             />
           </div>
         }
 
-
-        { (visibleProteins.length === 1 || this.state.demo) &&
+        { (visibleProteins.length === 1 || this.isDemo()) &&
           <div className="example">
             <ProteinViewer
               dna={visibleProteins[0].dna}
               svgImage={visibleProteins[0].svgImage}
               showDNA={this.state.showDNA}
               showAminoAcidsOnProtein={this.state.showAminoAcidsOnViewer}
-              dnaSwitchable={this.state.dnaSwitchable}
+              dnaSwitchable={dnaSwitchable}
               toggleShowDNA={this.toggleShowDNA}
               toggleShowingAminoAcidsOnProtein={this.toggleShowingAminoAcidsOnViewer}
             />
           </div>
         }
 
-        { (this.state.showBuilder || this.state.demo) &&
+        { (showBuilder || this.isDemo()) &&
           <div className="example">
             <ProteinBuilder
               dna={visibleProteins[0].dna}

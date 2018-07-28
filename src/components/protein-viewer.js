@@ -236,7 +236,7 @@ class ProteinViewer extends Component {
 ProteinViewer.propTypes = {
   dna: PropTypes.string,
   svgImage: PropTypes.string,
-  dna2: PropTypes.string.isRequired,
+  dna2: PropTypes.string,
   svgImage2: PropTypes.string,
   /** Width of the protein and slider elements, in pixels */
   width: PropTypes.number,
