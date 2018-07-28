@@ -1,0 +1,1 @@
+export { default as ProteinWrapper } from './components/ProteinWrapper';

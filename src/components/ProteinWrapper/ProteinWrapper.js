@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import './App.css';
-import ProteinViewer from './components/protein-viewer';
-import ProteinBuilder from './components/protein-builder';
-import getParameterByName from './util/urlUtils';
+import './ProteinWrapper.css';
+import ProteinViewer from '../protein-viewer';
+import ProteinBuilder from '../protein-builder';
+import getParameterByName from '../../util/urlUtils';
 
 const workingDNA = `
     5'-ATGCCCACCCAGGGGCCTCAGAAGAGGCTTCTGGGTTCTCTCAACTCCACCTCCACAGCCACCCCTCACCTTGGACTGGCCACAAACCAGACAGG
@@ -54,7 +54,7 @@ const proteins = {
   }
 }
 
-class App extends Component {
+class ProteinWrapper extends Component {
   constructor(props) {
     super(props);
 
@@ -153,4 +153,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default ProteinWrapper;
