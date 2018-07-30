@@ -97,7 +97,7 @@ class ProteinWrapper extends Component {
 
   render() {
     const visibleProteins = this.getDisplayedProteins().map(d => proteins[d]);
-    const { dnaSwitchable, showBuilder } = this.props
+    const { dnaSwitchable, showBuilder, onMark } = this.props
 
     return (
       <div className="App">
@@ -114,6 +114,7 @@ class ProteinWrapper extends Component {
               dnaSwitchable={dnaSwitchable}
               toggleShowDNA={this.toggleShowDNA}
               toggleShowingAminoAcidsOnProtein={this.toggleShowingAminoAcidsOnViewer}
+              onMark={onMark}
             />
           </div>
         }
@@ -128,6 +129,7 @@ class ProteinWrapper extends Component {
               dnaSwitchable={dnaSwitchable}
               toggleShowDNA={this.toggleShowDNA}
               toggleShowingAminoAcidsOnProtein={this.toggleShowingAminoAcidsOnViewer}
+              onMark={onMark}
             />
           </div>
         }

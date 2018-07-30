@@ -1,6 +1,6 @@
 {
   "name": "protein-viewer",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "main": "lib/libs.js",
   "homepage": "http://.",
   "dependencies": {

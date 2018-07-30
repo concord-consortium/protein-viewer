@@ -90,6 +90,12 @@ class ProteinViewer extends Component {
     } else {
       existingMarks.push(location);
     }
+
+    const { onMark } = this.props;
+    if (onMark) {
+      onMark(existingMarks);
+    }
+
     this.setState({
       marks: existingMarks
     });
